@@ -1,0 +1,223 @@
+@import "tailwindcss";
+
+
+
+/* ── Design Tokens ────────────────────────────────────── */
+:root {
+  --emerald: #10b981;
+  --emerald-light: rgba(16, 185, 129, 0.08);
+  --emerald-mid: rgba(16, 185, 129, 0.15);
+  --emerald-glow: 0 0 0 1px rgba(16, 185, 129, 0.3), 0 8px 32px rgba(16, 185, 129, 0.12);
+  --slate-900: #0f172a;
+  --slate-800: #1e293b;
+  --slate-600: #475569;
+  --slate-400: #94a3b8;
+  --slate-200: #e2e8f0;
+  --slate-100: #f1f5f9;
+  --slate-50: #f8fafc;
+  --white: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.72);
+  --glass-border: rgba(255, 255, 255, 0.9);
+  --card-shadow: 0 2px 8px rgba(0, 0, 0, 0.04), 0 16px 40px rgba(0, 0, 0, 0.06);
+  --card-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.06), 0 32px 60px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Base ─────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  /* Warm grey-to-white diagonal gradient — not flat */
+  background: linear-gradient(145deg, #f9fafb 0%, #ffffff 50%, #f9fafb 100%);
+  background-attachment: fixed;
+  color: var(--slate-900);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ── Background Orbs (subtle, emerald-only) ───────────── */
+.mesh-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* Top-left emerald breath */
+.mesh-bg::before {
+  content: "";
+  position: absolute;
+  top: -10%;
+  left: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.07) 0%, transparent 65%);
+  border-radius: 50%;
+  animation: driftA 20s ease-in-out infinite alternate;
+}
+
+/* Bottom-right emerald breath */
+.mesh-bg::after {
+  content: "";
+  position: absolute;
+  bottom: -12%;
+  right: -8%;
+  width: 44vw;
+  height: 44vw;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 65%);
+  border-radius: 50%;
+  animation: driftB 26s ease-in-out infinite alternate;
+}
+
+/* The purple orb is gone — replaced by the slim secondary ghost */
+.mesh-orb-purple {
+  display: none;
+}
+
+@keyframes driftA {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+
+  to {
+    transform: translate(5vw, 3vh) scale(1.08);
+  }
+}
+
+@keyframes driftB {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+
+  to {
+    transform: translate(-4vw, -2vh) scale(1.06);
+  }
+}
+
+/* ── Glass Card ─────────────────────────────────────────
+   No border by default. Shadow-only depth.
+   Add `glass-border` modifier when a subtle edge is needed. */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: var(--card-shadow);
+}
+
+.glass-border {
+  border: 1px solid rgba(255, 255, 255, 0.85);
+}
+
+/* Emerald glow ring — used on hover / selected state */
+.emerald-glow {
+  box-shadow: var(--emerald-glow), var(--card-shadow-hover);
+}
+
+/* ── Emerald Accent Text ────────────────────────────────
+   Use only for key impact numbers and action labels.     */
+.emerald-text {
+  color: var(--emerald);
+}
+
+/* ── Gradient Text: Emerald → Slate (no purple) ────────── */
+.gradient-text {
+  background: linear-gradient(120deg, #10b981 0%, #0ea5e9 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Shimmer: Emerald sweep ─────────────────────────────── */
+.shimmer-text {
+  background: linear-gradient(90deg,
+      #10b981 0%,
+      #34d399 40%,
+      #10b981 80%,
+      #059669 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 0% center;
+  }
+
+  to {
+    background-position: 200% center;
+  }
+}
+
+/* ── Serif font for pull-quotes ─────────────────────────── */
+.font-serif-display {
+  font-family: 'Lora', Georgia, 'Times New Roman', serif;
+}
+
+/* ── Pulsing emerald dot (Timeline) ─────────────────────── */
+@keyframes pulse-emerald {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+  }
+}
+
+.dot-pulse {
+  animation: pulse-emerald 2s ease-in-out infinite;
+}
+
+/* ── Smooth Card Lift ────────────────────────────────────── */
+.card-lift {
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.card-lift:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--card-shadow-hover);
+}
+
+/* ── Custom Scrollbar ─────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #10b981;
+}
+
+/* ── Selection ────────────────────────────────────────── */
+::selection {
+  background: rgba(16, 185, 129, 0.15);
+  color: #0f172a;
+}
+
+/* ── Perspective (kept for any remaining 3D needs) ──────── */
+.perspective {
+  perspective: 1200px;
+}
