@@ -3,13 +3,14 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Heart, Film } from "lucide-react";
+import SectionFX from "./SectionFX";
 
 const items = [
     {
         icon: Heart,
-        role: "President — Indian Catholic Youth",
+        role: "President · Indian Catholic Youth",
         org: "Arizona State University",
-        period: "2021 – 2022",
+        period: "2021 to 2022",
         description:
             "Led the Indian Catholic Youth organisation at ASU, growing active membership and increasing community engagement by 40% through events, prayer retreats, and cross-cultural outreach programmes.",
         impact: "40% increase in community engagement",
@@ -29,26 +30,31 @@ const items = [
 
 export default function Volunteering() {
     const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-60px" });
+    const isInView = useInView(ref, { once: true, margin: "30% 0px" });
 
     return (
-        <section id="volunteering" className="py-32 px-6">
-            <div className="max-w-6xl mx-auto">
+        <section id="volunteering" className="section-y px-6 relative overflow-hidden section-calm section-calm-bloom">
+            <SectionFX tone="bloom" rails="compact" />
+            <div className="max-w-6xl mx-auto relative z-10">
                 <motion.div
                     ref={ref}
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.6 }}
-                    className="mb-16"
+                    initial={{ opacity: 0.55, y: 40 }}
+                    animate={
+                        isInView
+                            ? { opacity: 1, y: 0 }
+                            : { opacity: 0.55, y: 28 }
+                    }
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="mb-10"
                 >
                     <p className="text-[#10b981] text-sm font-semibold tracking-widest uppercase mb-3">
-                        Beyond Code
+                        Beyond
                     </p>
-                    <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900">
-                        Volunteering
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900">
+                        Life outside the repo
                     </h2>
-                    <p className="text-slate-500 text-lg mt-3 max-w-md">
-                        Leadership and service outside the classroom — where values meet action.
+                    <p className="text-slate-500 text-base sm:text-lg mt-3 max-w-md">
+                        Community leadership and a short film that reached thousands.
                     </p>
                 </motion.div>
 
@@ -58,11 +64,15 @@ export default function Volunteering() {
                         return (
                             <motion.div
                                 key={item.role}
-                                initial={{ opacity: 0, y: 36 }}
-                                animate={isInView ? { opacity: 1, y: 0 } : {}}
-                                transition={{ duration: 0.6, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
-                                whileHover={{ y: -5 }}
-                                className="glass rounded-3xl p-7 shadow-md hover:shadow-xl transition-all duration-300"
+                                initial={{ opacity: 0.55, y: 36, scale: 0.96 }}
+                                animate={
+                                    isInView
+                                        ? { opacity: 1, y: 0, scale: 1 }
+                                        : { opacity: 0.6, y: 22, scale: 0.97 }
+                                }
+                                transition={{ duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                                whileHover={{ y: -10, scale: 1.02 }}
+                                className="glass calm-card elite-surface rounded-3xl p-7 shadow-md hover:shadow-xl transition-shadow duration-300"
                             >
                                 {/* Top */}
                                 <div className="flex items-start gap-4 mb-5">
@@ -94,7 +104,7 @@ export default function Volunteering() {
                                     {item.tags.map((tag) => (
                                         <span
                                             key={tag}
-                                            className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-500"
+                                            className="fx-tag px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-500"
                                         >
                                             {tag}
                                         </span>
@@ -108,3 +118,4 @@ export default function Volunteering() {
         </section>
     );
 }
+

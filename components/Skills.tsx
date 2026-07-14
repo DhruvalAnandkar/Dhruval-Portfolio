@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { motion, useInView, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Code2, Database, BarChart3, BrainCircuit } from "lucide-react";
+import SectionFX from "./SectionFX";
 
 /* ─────────────────────────────────────────────────────────
    INLINE SVG BRAND MARKS (Simple Icons paths)
@@ -161,14 +162,14 @@ function SkillChip({ name, delay }: { name: string; delay: number }) {
     return (
         <motion.span
             ref={ref}
-            initial={{ opacity: 0, y: 10 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.38, delay }}
+            initial={{ opacity: 1, y: 0 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay }}
             onHoverStart={() => setHovered(true)}
             onHoverEnd={() => setHovered(false)}
-            whileHover={{ scale: 1.05, y: -2 }}
+            whileHover={{ scale: 1.06, y: -3 }}
             className={`
-        inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-bold
+        calm-chip inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-sm font-bold
         cursor-default select-none transition-all duration-200
         ${hovered
                     ? "bg-emerald-50 border border-emerald-200 text-[#10b981]"
@@ -218,9 +219,13 @@ function PillarCard({
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 36 }}
-            animate={parentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: cardDelay, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0.55, y: 40, scale: 0.96 }}
+            animate={
+                parentInView
+                    ? { opacity: 1, y: 0, scale: 1 }
+                    : { opacity: 0.6, y: 28, scale: 0.97 }
+            }
+            transition={{ duration: 0.55, delay: cardDelay, ease: [0.22, 1, 0.36, 1] }}
             className="perspective"
         >
             <motion.div
@@ -235,7 +240,7 @@ function PillarCard({
                         : "0 2px 8px rgba(0,0,0,0.04), 0 12px 32px rgba(0,0,0,0.06)",
                 }}
                 transition={{ boxShadow: { duration: 0.3 } }}
-                className="glass rounded-3xl p-6 lg:p-7 h-full"
+                className="glass calm-card elite-surface rounded-3xl p-6 lg:p-7 h-full"
             >
                 {/* Header */}
                 <div className="flex items-start justify-between gap-3 mb-6">
@@ -267,28 +272,39 @@ function PillarCard({
 
 export default function Skills() {
     const headerRef = useRef(null);
-    const isInView = useInView(headerRef, { once: true, margin: "-60px" });
+    const isInView = useInView(headerRef, { once: true, margin: "30% 0px" });
 
     return (
-        <section id="skills" className="py-32 px-6">
-            <div className="max-w-6xl mx-auto">
+        <section id="skills" className="section-y px-6 relative overflow-hidden section-calm section-calm-sky">
+            <SectionFX tone="sky" rails="compact" />
+            <div className="max-w-6xl mx-auto relative z-10">
                 {/* Header — staggered fade-in */}
                 <motion.div
                     ref={headerRef}
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.6 }}
-                    className="mb-16"
+                    initial={{ opacity: 0.55, y: 40 }}
+                    animate={
+                        isInView
+                            ? { opacity: 1, y: 0 }
+                            : { opacity: 0.55, y: 28 }
+                    }
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="mb-10"
                 >
                     <p className="text-[#10b981] text-sm font-semibold tracking-widest uppercase mb-3">
-                        Expertise
+                        Toolkit
                     </p>
-                    <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-3">
-                        Tech Stack
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 mb-3">
+                        The stack that ships
                     </h2>
                     <p className="text-slate-500 text-lg max-w-xl">
-                        Four targeted pillars — optimized for Data Engineering, BI, AI/ML, and Software Engineering roles.
+                        Four pillars tuned for SWE, data engineering, BI, and AI/ML roles.
                     </p>
+                    <motion.div
+                        className="mt-5 h-px max-w-sm bg-gradient-to-r from-[#10b981] to-transparent"
+                        initial={{ scaleX: 0, originX: 0 }}
+                        animate={isInView ? { scaleX: 1 } : {}}
+                        transition={{ duration: 1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                    />
                 </motion.div>
 
                 {/* 2×2 grid */}
@@ -306,3 +322,4 @@ export default function Skills() {
         </section>
     );
 }
+

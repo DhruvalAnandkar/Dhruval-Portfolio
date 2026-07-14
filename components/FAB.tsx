@@ -48,8 +48,22 @@ export default function FAB() {
                 onHoverEnd={() => setHovered(false)}
                 onClick={() => setOpen(true)}
                 initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: 1.2, type: "spring", stiffness: 300, damping: 22 }}
+                animate={{
+                    scale: 1,
+                    opacity: 1,
+                    boxShadow: [
+                        "0 12px 40px rgba(15,23,42,0.25)",
+                        "0 12px 48px rgba(16,185,129,0.35)",
+                        "0 12px 40px rgba(15,23,42,0.25)",
+                    ],
+                }}
+                transition={{
+                    delay: 1.2,
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 22,
+                    boxShadow: { duration: 2.8, repeat: Infinity },
+                }}
                 whileTap={{ scale: 0.94 }}
                 className="fixed bottom-7 right-6 z-50 flex items-center justify-center gap-2.5 overflow-hidden rounded-full bg-slate-900 text-white shadow-2xl shadow-slate-900/30 hover:bg-[#10b981] transition-colors duration-300"
                 style={{ width: hovered ? "auto" : 52, height: 52, paddingLeft: hovered ? 20 : 0, paddingRight: hovered ? 20 : 0 }}

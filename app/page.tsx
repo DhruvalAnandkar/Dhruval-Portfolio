@@ -1,5 +1,10 @@
+"use client";
+
+import IntroExperience from "@/components/IntroExperience";
 import Navbar from "@/components/Navbar";
-import FloatingParticles from "@/components/FloatingParticles";
+import DeferredFX from "@/components/DeferredFX";
+import ScrollProgress from "@/components/ScrollProgress";
+import WorldPath from "@/components/WorldPath";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
 import Skills from "@/components/Skills";
@@ -10,17 +15,21 @@ import Timeline from "@/components/Timeline";
 import Volunteering from "@/components/Volunteering";
 import Footer from "@/components/Footer";
 import FAB from "@/components/FAB";
+import QuickNav from "@/components/QuickNav";
 
 export default function Home() {
   return (
-    <>
-      {/* Subtle emerald-only floating particles background */}
-      <FloatingParticles />
+    <IntroExperience>
+      <ScrollProgress />
+      <DeferredFX />
 
       <Navbar />
 
       <main className="relative z-10">
         <Hero />
+        <div className="section-seam" aria-hidden />
+        <WorldPath />
+        <div className="section-seam" aria-hidden />
         <About />
         <Skills />
         <Projects />
@@ -31,9 +40,8 @@ export default function Home() {
       </main>
 
       <Footer />
-
-      {/* Floating "Let's Talk" action button */}
+      <QuickNav />
       <FAB />
-    </>
+    </IntroExperience>
   );
 }

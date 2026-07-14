@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Lora } from "next/font/google";
+import "lenis/dist/lenis.css";
 import "./globals.css";
 
 const geist = Geist({
@@ -27,9 +28,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="scroll-smooth">
+    <html lang="en">
       <body
-        className={`${geist.variable} ${lora.variable} font-[family-name:var(--font-geist)] antialiased text-slate-800 bg-white`}
+        className={`${geist.variable} ${lora.variable} font-[family-name:var(--font-geist)] antialiased text-slate-800 bg-transparent`}
       >
         {children}
       </body>

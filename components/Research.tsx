@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { BookOpen, Award, Microscope, ExternalLink } from "lucide-react";
+import SectionFX from "./SectionFX";
 
 interface Paper {
     title: string;
@@ -14,6 +15,8 @@ interface Paper {
     icon: React.ReactNode;
     link?: string;
     isPresented?: boolean;
+    /** Shown when no link — never claim a finished paper unless one exists */
+    availabilityNote?: string;
 }
 
 const papers: Paper[] = [
@@ -27,36 +30,48 @@ const papers: Paper[] = [
             "Containerization reduced idle RAM from 42% → 15% and doubled throughput on compute-intensive tasks, proving modern container runtimes impose negligible GPU overhead when configured correctly.",
         tags: ["Docker", "Kubernetes", "Deep Learning", "RTX 3060", "Benchmarking", "Python"],
         icon: <Microscope size={20} />,
+        availabilityNote: "Findings summarized above; full write-up in progress.",
     },
     {
         title: "AgriScience: Automated Irrigation Control via Deep Learning",
         venue: "URCA Symposium · Ashland University",
         year: "2024",
         abstract:
-            "Presented at the Undergraduate Research and Creative Activity (URCA) Symposium. Describes the full AgriScience IoT pipeline — from NodeMCU sensor deployment to Firebase ingestion, Random Forest soil-health classification, and automated solenoid-valve irrigation control.",
+            "Presented at the Undergraduate Research and Creative Activity (URCA) Symposium. Describes the full AgriScience IoT pipeline from NodeMCU sensor deployment to Firebase ingestion, Random Forest soil-health classification, and automated solenoid-valve irrigation control.",
         keyResult:
             "94% classification accuracy on held-out soil samples; CNN-based plant disease detection module achieved 89% accuracy on the PlantVillage dataset.",
         tags: ["IoT", "Deep Learning", "TensorFlow", "Random Forest", "Firebase"],
         icon: <Award size={20} />,
         isPresented: true,
+        availabilityNote: "Findings summarized above; full write-up in progress.",
     },
 ];
 
 function PaperCard({ paper, delay }: { paper: Paper; delay: number }) {
     const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-50px" });
+    const isInView = useInView(ref, { once: true, margin: "30% 0px" });
 
     return (
         <motion.div
             ref={ref}
-            initial={{ opacity: 0, y: 40 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
-            whileHover={{ y: -5 }}
-            className="glass rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
+            initial={{ opacity: 0.55, y: 40, scale: 0.97 }}
+            animate={
+                isInView
+                    ? { opacity: 1, y: 0, scale: 1 }
+                    : { opacity: 0.6, y: 28, scale: 0.98 }
+            }
+            transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
+            whileHover={{ y: -10, scale: 1.02 }}
+            className="glass calm-card elite-surface rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
         >
             {/* Emerald top line */}
-            <div className="h-[3px] w-full bg-[#10b981] shrink-0" />
+            <motion.div
+                className="h-[3px] w-full bg-[#10b981] shrink-0"
+                initial={{ scaleX: 0 }}
+                animate={isInView ? { scaleX: 1 } : {}}
+                transition={{ duration: 0.8, delay: delay + 0.15, ease: [0.22, 1, 0.36, 1] }}
+                style={{ originX: 0 }}
+            />
 
             <div className="p-7 flex flex-col flex-1">
                 {/* Header */}
@@ -97,7 +112,7 @@ function PaperCard({ paper, delay }: { paper: Paper; delay: number }) {
                 {/* Tags */}
                 <div className="flex flex-wrap gap-1.5 mb-5">
                     {paper.tags.map((tag) => (
-                        <span key={tag} className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
+                        <span key={tag} className="fx-tag px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
                             {tag}
                         </span>
                     ))}
@@ -109,7 +124,9 @@ function PaperCard({ paper, delay }: { paper: Paper; delay: number }) {
                         <ExternalLink size={14} /> Read Paper
                     </a>
                 ) : (
-                    <p className="text-xs text-slate-400 italic">Full paper available on request.</p>
+                    <p className="text-xs text-slate-400 italic">
+                        {paper.availabilityNote ?? "Findings summarized above; full write-up in progress."}
+                    </p>
                 )}
             </div>
         </motion.div>
@@ -118,30 +135,37 @@ function PaperCard({ paper, delay }: { paper: Paper; delay: number }) {
 
 export default function Research() {
     const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-60px" });
+    const isInView = useInView(ref, { once: true, margin: "30% 0px" });
 
     return (
-        <section id="research" className="py-32 px-6">
-            <div className="max-w-6xl mx-auto">
+        <section id="research" className="section-y px-6 relative overflow-hidden section-calm section-calm-sky">
+            <SectionFX tone="sky" rails="compact" />
+            <div className="max-w-6xl mx-auto relative z-10">
                 <motion.div
                     ref={ref}
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.6 }}
-                    className="mb-16"
+                    initial={{ opacity: 0.55, y: 40 }}
+                    animate={
+                        isInView
+                            ? { opacity: 1, y: 0 }
+                            : { opacity: 0.55, y: 28 }
+                    }
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="mb-10"
                 >
                     <p className="text-[#10b981] text-sm font-semibold tracking-widest uppercase mb-3">
-                        Research
+                        Inquiry
                     </p>
                     <div className="flex items-end gap-4 flex-wrap mb-4">
-                        <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900">Publications</h2>
+                        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900">
+                            Questions I chased with code
+                        </h2>
                         <div className="flex items-center gap-2 pb-1">
                             <BookOpen size={17} className="text-slate-400" />
-                            <span className="text-slate-400 font-medium text-sm">2 papers</span>
+                            <span className="text-slate-400 font-medium text-sm">2 research projects</span>
                         </div>
                     </div>
                     <p className="text-slate-500 text-lg max-w-xl">
-                        Applied research at the intersection of systems, AI, and sustainable agriculture.
+                        Systems, AI, and agriculture where measurement meets deployment.
                     </p>
                 </motion.div>
 
@@ -154,3 +178,4 @@ export default function Research() {
         </section>
     );
 }
+

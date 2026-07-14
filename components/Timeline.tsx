@@ -3,10 +3,11 @@
 import { useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 import { MapPin, Calendar, ShieldCheck } from "lucide-react";
+import SectionFX from "./SectionFX";
 
 const experiences = [
     {
-        period: "2024 – Present",
+        period: "2024 to Present",
         role: "Business Intelligence Intern",
         company: "Ashland University",
         location: "Ashland, OH",
@@ -17,7 +18,7 @@ const experiences = [
         isLeadership: false,
     },
     {
-        period: "Fall 2024 – Ongoing",
+        period: "Fall 2024 to Ongoing",
         role: "President",
         company: "ACM-W Club @ Ashland University",
         location: "Ashland, OH",
@@ -28,7 +29,7 @@ const experiences = [
         isLeadership: true,
     },
     {
-        period: "Dec 2024 – May 2025",
+        period: "Dec 2024 to May 2025",
         role: "International Student Representative",
         company: "AU Senate",
         location: "Ashland, OH",
@@ -39,7 +40,7 @@ const experiences = [
         isLeadership: true,
     },
     {
-        period: "2023 – Present",
+        period: "2023 to Present",
         role: "Research Team Lead",
         company: "AgriScience IoT Project",
         location: "Ashland University",
@@ -91,14 +92,18 @@ function GrowingLine() {
 
 function EntryCard({ exp, index }: { exp: (typeof experiences)[0]; index: number }) {
     const ref = useRef(null);
-    const isInView = useInView(ref, { once: true, margin: "-50px" });
+    const isInView = useInView(ref, { once: true, margin: "30% 0px" });
 
     return (
         <motion.div
             ref={ref}
-            initial={{ opacity: 0, x: -24 }}
-            animate={isInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.6, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0.55, x: -16, y: 24 }}
+            animate={
+                isInView
+                    ? { opacity: 1, x: 0, y: 0 }
+                    : { opacity: 0.65, x: -8, y: 14 }
+            }
+            transition={{ duration: 0.5, delay: Math.min(index * 0.05, 0.25), ease: [0.22, 1, 0.36, 1] }}
             className="relative pl-12"
         >
             {/* Dot */}
@@ -113,9 +118,9 @@ function EntryCard({ exp, index }: { exp: (typeof experiences)[0]; index: number
             </div>
 
             <motion.div
-                whileHover={{ y: -3 }}
-                transition={{ duration: 0.3 }}
-                className={`glass rounded-2xl p-5 transition-shadow duration-300 ${exp.isLeadership
+                whileHover={{ y: -6, scale: 1.012 }}
+                transition={{ type: "spring", stiffness: 280, damping: 20 }}
+                className={`glass calm-card elite-surface rounded-2xl p-5 transition-shadow duration-300 ${exp.isLeadership
                         ? "shadow-[0_0_0_1px_rgba(16,185,129,0.18)] hover:shadow-[0_0_0_1.5px_rgba(16,185,129,0.35),0_12px_32px_rgba(0,0,0,0.08)]"
                         : "shadow-sm hover:shadow-md"
                     }`}
@@ -145,7 +150,7 @@ function EntryCard({ exp, index }: { exp: (typeof experiences)[0]; index: number
                 <p className="text-slate-500 text-sm leading-relaxed mb-4">{exp.description}</p>
                 <div className="flex flex-wrap gap-1.5">
                     {exp.tags.map((tag) => (
-                        <span key={tag} className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
+                        <span key={tag} className="fx-tag px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-500">
                             {tag}
                         </span>
                     ))}
@@ -157,22 +162,32 @@ function EntryCard({ exp, index }: { exp: (typeof experiences)[0]; index: number
 
 export default function Timeline() {
     const headerRef = useRef(null);
-    const isInView = useInView(headerRef, { once: true });
+    const isInView = useInView(headerRef, { once: true, margin: "30% 0px" });
 
     return (
-        <section id="experience" className="py-32 px-6">
-            <div className="max-w-3xl mx-auto">
+        <section id="experience" className="section-y px-6 relative overflow-hidden section-calm section-calm-mist">
+            <SectionFX tone="mist" rails="compact" />
+            <div className="max-w-3xl mx-auto relative z-10">
                 <motion.div
                     ref={headerRef}
-                    initial={{ opacity: 0, y: 24 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.6 }}
-                    className="mb-16"
+                    initial={{ opacity: 0.55, y: 40 }}
+                    animate={
+                        isInView
+                            ? { opacity: 1, y: 0 }
+                            : { opacity: 0.55, y: 28 }
+                    }
+                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="mb-10"
                 >
                     <p className="text-[#10b981] text-sm font-semibold tracking-widest uppercase mb-3">
-                        Experience & Leadership
+                        Experience
                     </p>
-                    <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900">Timeline</h2>
+                    <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900">
+                        Roles that sharpened the craft
+                    </h2>
+                    <p className="text-slate-500 text-base mt-2 max-w-md">
+                        Internships, leadership, and research ownership in order.
+                    </p>
                 </motion.div>
 
                 <div className="relative">
@@ -187,3 +202,4 @@ export default function Timeline() {
         </section>
     );
 }
+
