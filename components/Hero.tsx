@@ -130,7 +130,7 @@ function Typewriter({ words }: { words: string[] }) {
 const stats = [
     { value: "3+", label: "Years Building" },
     { value: "4", label: "Major Projects" },
-    { value: "2", label: "Publications" },
+    { value: "2", label: "Research Projects" },
     { value: "GPA 3.7", label: "CS Honors" },
 ];
 

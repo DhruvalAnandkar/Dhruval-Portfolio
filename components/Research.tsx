@@ -14,6 +14,8 @@ interface Paper {
     icon: React.ReactNode;
     link?: string;
     isPresented?: boolean;
+    /** Shown when no link — never claim a finished paper unless one exists */
+    availabilityNote?: string;
 }
 
 const papers: Paper[] = [
@@ -27,6 +29,7 @@ const papers: Paper[] = [
             "Containerization reduced idle RAM from 42% → 15% and doubled throughput on compute-intensive tasks, proving modern container runtimes impose negligible GPU overhead when configured correctly.",
         tags: ["Docker", "Kubernetes", "Deep Learning", "RTX 3060", "Benchmarking", "Python"],
         icon: <Microscope size={20} />,
+        availabilityNote: "Findings summarized above; full write-up in progress.",
     },
     {
         title: "AgriScience: Automated Irrigation Control via Deep Learning",
@@ -39,6 +42,7 @@ const papers: Paper[] = [
         tags: ["IoT", "Deep Learning", "TensorFlow", "Random Forest", "Firebase"],
         icon: <Award size={20} />,
         isPresented: true,
+        availabilityNote: "Findings summarized above; full write-up in progress.",
     },
 ];
 
@@ -109,7 +113,9 @@ function PaperCard({ paper, delay }: { paper: Paper; delay: number }) {
                         <ExternalLink size={14} /> Read Paper
                     </a>
                 ) : (
-                    <p className="text-xs text-slate-400 italic">Full paper available on request.</p>
+                    <p className="text-xs text-slate-400 italic">
+                        {paper.availabilityNote ?? "Findings summarized above; full write-up in progress."}
+                    </p>
                 )}
             </div>
         </motion.div>
@@ -134,10 +140,10 @@ export default function Research() {
                         Research
                     </p>
                     <div className="flex items-end gap-4 flex-wrap mb-4">
-                        <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900">Publications</h2>
+                        <h2 className="text-4xl sm:text-5xl font-extrabold text-slate-900">Research</h2>
                         <div className="flex items-center gap-2 pb-1">
                             <BookOpen size={17} className="text-slate-400" />
-                            <span className="text-slate-400 font-medium text-sm">2 papers</span>
+                            <span className="text-slate-400 font-medium text-sm">2 research projects</span>
                         </div>
                     </div>
                     <p className="text-slate-500 text-lg max-w-xl">
