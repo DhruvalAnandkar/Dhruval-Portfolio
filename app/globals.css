@@ -30,13 +30,21 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* Native smooth anchors only — NOT wheel scrolling (that feels laggy) */
+  scroll-behavior: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:focus-within {
+    scroll-behavior: smooth;
+  }
 }
 
 body {
   /* Warm grey-to-white diagonal gradient — not flat */
   background: linear-gradient(145deg, #f9fafb 0%, #ffffff 50%, #f9fafb 100%);
-  background-attachment: fixed;
+  /* fixed attachment causes major scroll jank / blank frames */
+  background-attachment: scroll;
   color: var(--slate-900);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -107,9 +115,10 @@ body {
    No border by default. Shadow-only depth.
    Add `glass-border` modifier when a subtle edge is needed. */
 .glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
+  /* Solid-enough fill + light blur — heavy blur made fast-scroll frames blank */
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   box-shadow: var(--card-shadow);
 }
 
@@ -221,3 +230,1178 @@ body {
 .perspective {
   perspective: 1200px;
 }
+
+/* ── Tighter section rhythm (less dead scroll) ─────────── */
+.section-y {
+  padding-block: 4.5rem;
+}
+
+@media (min-width: 640px) {
+  .section-y {
+    padding-block: 5.5rem;
+  }
+}
+
+/* ── Story marquee ─────────────────────────────────────── */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 38s linear infinite;
+}
+
+.mask-marquee {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+/* ── Live status pulse ring ────────────────────────────── */
+@keyframes status-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+.status-ring::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1.5px solid #10b981;
+  animation: status-ring 1.8s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+/* ── Grid shimmer for live panels ──────────────────────── */
+@keyframes grid-drift {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 40px 40px;
+  }
+}
+
+.live-grid {
+  background-image:
+    linear-gradient(rgba(16, 185, 129, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 185, 129, 0.06) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: grid-drift 18s linear infinite;
+}
+
+/* ── Intro experience helpers ──────────────────────────── */
+@keyframes intro-glint {
+  0% {
+    transform: translateX(-120%) skewX(-18deg);
+    opacity: 0;
+  }
+
+  35% {
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: translateX(220%) skewX(-18deg);
+    opacity: 0;
+  }
+}
+
+.intro-glint::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+  animation: intro-glint 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
+}
+
+/* Anime-inspired speed lines for chapter cards */
+.scene-speedlines {
+  background:
+    repeating-linear-gradient(
+      -18deg,
+      transparent 0 14px,
+      rgba(16, 185, 129, 0.07) 14px 15px
+    ),
+    repeating-linear-gradient(
+      18deg,
+      transparent 0 18px,
+      rgba(255, 255, 255, 0.04) 18px 19px
+    );
+  mask-image: radial-gradient(circle at center, #000 20%, transparent 72%);
+  -webkit-mask-image: radial-gradient(circle at center, #000 20%, transparent 72%);
+  animation: speedline-pulse 0.9s ease-out both;
+}
+
+@keyframes speedline-pulse {
+  from {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+
+  40% {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+}
+
+/* ── Anime hero sky (CSS-only transforms — cheap & smooth) ── */
+.anime-layer-far {
+  transform: translate3d(calc(var(--mx, 0) * -10px), calc(var(--my, 0) * -6px), 0);
+  will-change: transform;
+}
+
+.anime-layer-mid {
+  transform: translate3d(calc(var(--mx, 0) * -18px), calc(var(--my, 0) * -10px), 0);
+  will-change: transform;
+}
+
+.anime-layer-near {
+  transform: translate3d(calc(var(--mx, 0) * 8px), calc(var(--my, 0) * 5px), 0);
+  will-change: transform;
+}
+
+.anime-sky-wash {
+  background:
+    radial-gradient(ellipse 90% 55% at 72% -5%, rgba(125, 211, 252, 0.55) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 12% 15%, rgba(253, 186, 116, 0.28) 0%, transparent 50%),
+    radial-gradient(ellipse 60% 45% at 88% 40%, rgba(167, 243, 208, 0.35) 0%, transparent 48%),
+    linear-gradient(180deg, #dbeafe 0%, #e0f2fe 28%, #ecfdf5 62%, #f0fdf4 100%);
+}
+
+.anime-godrays {
+  background: conic-gradient(
+    from 205deg at 68% -8%,
+    transparent 0deg,
+    rgba(255, 255, 255, 0.7) 10deg,
+    transparent 22deg,
+    transparent 34deg,
+    rgba(255, 248, 220, 0.55) 44deg,
+    transparent 58deg,
+    transparent 72deg,
+    rgba(255, 255, 255, 0.4) 82deg,
+    transparent 98deg
+  );
+  opacity: 0.62;
+  mix-blend-mode: soft-light;
+  animation: anime-ray-breathe 9s ease-in-out infinite;
+}
+
+.anime-flare {
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.22) 48%,
+    rgba(253, 224, 71, 0.18) 50%,
+    rgba(255, 255, 255, 0.16) 52%,
+    transparent 65%
+  );
+  opacity: 0.55;
+  animation: anime-flare-drift 14s ease-in-out infinite alternate;
+}
+
+.anime-cloud {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(1px);
+  background: radial-gradient(ellipse at 40% 40%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.15) 70%);
+  box-shadow:
+    28px 8px 0 -6px rgba(255, 255, 255, 0.55),
+    -24px 12px 0 -8px rgba(255, 255, 255, 0.4);
+}
+
+.anime-cloud-a {
+  top: 8%;
+  left: -6%;
+  width: min(42vw, 420px);
+  height: 72px;
+  opacity: 0.78;
+  animation: anime-cloud-drift 38s linear infinite;
+}
+
+.anime-cloud-b {
+  top: 16%;
+  right: -8%;
+  width: min(48vw, 480px);
+  height: 88px;
+  opacity: 0.7;
+  animation: anime-cloud-drift 52s linear infinite reverse;
+}
+
+.anime-cloud-c {
+  top: 28%;
+  left: 18%;
+  width: min(34vw, 340px);
+  height: 58px;
+  opacity: 0.35;
+  animation: anime-cloud-drift 44s linear infinite;
+}
+
+.anime-cloud-d {
+  top: 12%;
+  left: 40%;
+  width: min(28vw, 280px);
+  height: 48px;
+  opacity: 0.4;
+  animation: anime-cloud-drift 30s linear infinite reverse;
+}
+
+.anime-cloud-e {
+  top: 34%;
+  right: 12%;
+  width: min(36vw, 360px);
+  height: 64px;
+  opacity: 0.32;
+  animation: anime-cloud-drift 46s linear infinite;
+}
+
+.anime-wind {
+  position: absolute;
+  height: 1px;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+  opacity: 0;
+  animation: anime-wind-slash 7s ease-in-out infinite;
+}
+
+.anime-wind-1 {
+  top: 22%;
+  left: 10%;
+  width: 28%;
+  animation-delay: 0.2s;
+}
+
+.anime-wind-2 {
+  top: 38%;
+  left: 35%;
+  width: 34%;
+  animation-delay: 2.4s;
+}
+
+.anime-wind-3 {
+  top: 48%;
+  left: 55%;
+  width: 22%;
+  animation-delay: 4.1s;
+}
+
+.anime-petal {
+  position: absolute;
+  top: -10%;
+  border-radius: 40% 60% 55% 45%;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: anime-petal-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.anime-spark {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 10px rgba(253, 224, 71, 0.8);
+  animation: anime-sparkle 3.6s ease-in-out infinite;
+}
+
+.anime-hills {
+  background:
+    radial-gradient(ellipse 55% 70% at 18% 100%, rgba(16, 185, 129, 0.42) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 65% at 52% 110%, rgba(5, 150, 105, 0.34) 0%, transparent 68%),
+    radial-gradient(ellipse 60% 75% at 86% 105%, rgba(52, 211, 153, 0.32) 0%, transparent 70%);
+}
+
+@keyframes anime-cloud-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(8vw, -6px, 0);
+  }
+}
+
+@keyframes anime-ray-breathe {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    opacity: 0.42;
+    transform: translate3d(-1%, 1%, 0) scale(1.02);
+  }
+}
+
+@keyframes anime-flare-drift {
+  from {
+    transform: translate3d(-4%, 0, 0);
+    opacity: 0.35;
+  }
+  to {
+    transform: translate3d(4%, 2%, 0);
+    opacity: 0.65;
+  }
+}
+
+@keyframes anime-wind-slash {
+  0%,
+  70%,
+  100% {
+    opacity: 0;
+    transform: translate3d(-8%, 0, 0);
+  }
+  78% {
+    opacity: 0.7;
+  }
+  90% {
+    opacity: 0;
+    transform: translate3d(18%, -4px, 0);
+  }
+}
+
+@keyframes anime-petal-fall {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  8% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate3d(var(--petal-drift, 24px), 115vh, 0) rotate(260deg);
+    opacity: 0;
+  }
+}
+
+@keyframes anime-sparkle {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.6);
+  }
+  50% {
+    opacity: 0.95;
+    transform: scale(1.25);
+  }
+}
+
+/* ── Site-wide calm nature theme (every section) ───────── */
+.calm-global-wash {
+  background:
+    radial-gradient(ellipse 50% 40% at 10% 30%, rgba(167, 243, 208, 0.14), transparent 60%),
+    radial-gradient(ellipse 45% 35% at 90% 70%, rgba(186, 230, 253, 0.14), transparent 55%),
+    radial-gradient(ellipse 60% 30% at 50% 0%, rgba(254, 243, 199, 0.08), transparent 55%);
+  animation: calm-wash-breathe 18s ease-in-out infinite alternate;
+}
+
+@keyframes calm-wash-breathe {
+  from {
+    opacity: 0.55;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Fixed hero-echo layers (SiteAtmosphere) — deliberately visible */
+.site-atm-sky {
+  background:
+    linear-gradient(180deg, rgba(219, 234, 254, 0.55) 0%, rgba(236, 253, 245, 0.35) 45%, rgba(240, 253, 244, 0.25) 100%);
+}
+
+.site-atm-rays {
+  background:
+    conic-gradient(
+      from 210deg at 72% -8%,
+      transparent 0deg,
+      rgba(255, 251, 235, 0.35) 12deg,
+      transparent 28deg,
+      rgba(254, 243, 199, 0.28) 48deg,
+      transparent 70deg
+    );
+  mix-blend-mode: soft-light;
+  opacity: 0.85;
+  animation: anime-ray-breathe 14s ease-in-out infinite;
+}
+
+.site-atm-flare {
+  background: radial-gradient(ellipse 42% 28% at 78% 8%, rgba(254, 249, 195, 0.42), transparent 70%);
+  animation: anime-flare-drift 18s ease-in-out infinite alternate;
+  opacity: 0.85;
+}
+
+.site-atm-clouds {
+  opacity: 0.85;
+}
+
+.site-atm-cloud {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(24px);
+  background: rgba(255, 255, 255, 0.72);
+  will-change: transform;
+}
+
+.site-atm-cloud-a {
+  width: min(46vw, 460px);
+  height: min(18vw, 160px);
+  top: 14%;
+  left: -8%;
+  animation: anime-cloud-drift 42s linear infinite;
+}
+
+.site-atm-cloud-b {
+  width: min(40vw, 400px);
+  height: min(16vw, 140px);
+  top: 42%;
+  right: -10%;
+  background: rgba(224, 242, 254, 0.7);
+  animation: anime-cloud-drift 52s linear infinite reverse;
+}
+
+.site-atm-cloud-c {
+  width: min(34vw, 340px);
+  height: min(14vw, 120px);
+  top: 68%;
+  left: 28%;
+  background: rgba(236, 253, 245, 0.65);
+  animation: anime-cloud-drift 58s linear infinite;
+}
+
+.site-atm-spark {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(254, 249, 195, 0.95);
+  box-shadow: 0 0 12px rgba(253, 224, 71, 0.65);
+  animation: anime-sparkle 3.6s ease-in-out infinite;
+}
+
+.site-atm-petal {
+  opacity: 0.85 !important;
+  z-index: 2;
+}
+
+/* Soft seam between hero → map so pages don’t feel chopped */
+.section-seam {
+  pointer-events: none;
+  position: relative;
+  z-index: 5;
+  height: 0;
+}
+
+.section-seam::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -7rem;
+  height: 14rem;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(167, 243, 208, 0.22) 40%,
+    rgba(240, 253, 244, 0.55) 70%,
+    transparent 100%
+  );
+}
+
+/* Compositor scroll rise — low opacity floor so text never blanks */
+@supports (animation-timeline: view()) {
+  .scroll-rise {
+    animation: scroll-rise-view both linear;
+    animation-timeline: view();
+    animation-range: entry 0% cover 35%;
+  }
+
+  @keyframes scroll-rise-view {
+    from {
+      opacity: 0.55;
+      transform: translate3d(0, 28px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+  }
+}
+
+.lenis-on {
+  scroll-behavior: auto !important;
+}
+
+.section-calm {
+  isolation: isolate;
+}
+
+/* Translucent washes — site sky must show through (was opaque = "chopped") */
+.section-calm-meadow {
+  background:
+    radial-gradient(ellipse 80% 50% at 15% 0%, rgba(167, 243, 208, 0.18), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 90% 100%, rgba(253, 230, 138, 0.1), transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0.15));
+}
+
+.section-calm-sky {
+  background:
+    radial-gradient(ellipse 75% 50% at 80% 0%, rgba(186, 230, 253, 0.22), transparent 55%),
+    radial-gradient(ellipse 60% 40% at 10% 90%, rgba(167, 243, 208, 0.12), transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12));
+}
+
+.section-calm-mist {
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 0%, rgba(236, 253, 245, 0.4), transparent 60%),
+    radial-gradient(ellipse 55% 40% at 20% 100%, rgba(224, 242, 254, 0.22), transparent 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.14));
+}
+
+.section-calm-bloom {
+  background:
+    radial-gradient(ellipse 65% 45% at 85% 10%, rgba(254, 205, 211, 0.14), transparent 50%),
+    radial-gradient(ellipse 70% 50% at 10% 90%, rgba(167, 243, 208, 0.16), transparent 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.12));
+}
+
+/* Per-section hero echo (rays, clouds, haze — not cartoon flora) */
+.section-atm {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.section-atm-wash {
+  position: absolute;
+  inset: 0;
+  opacity: 0.85;
+}
+
+.section-atm-meadow .section-atm-wash {
+  background:
+    radial-gradient(ellipse 50% 40% at 8% 90%, rgba(16, 185, 129, 0.12), transparent 65%),
+    radial-gradient(ellipse 40% 30% at 92% 85%, rgba(52, 211, 153, 0.1), transparent 60%);
+}
+
+.section-atm-sky .section-atm-wash {
+  background:
+    radial-gradient(ellipse 55% 40% at 88% 8%, rgba(186, 230, 253, 0.22), transparent 60%),
+    radial-gradient(ellipse 40% 30% at 10% 90%, rgba(167, 243, 208, 0.12), transparent 55%);
+}
+
+.section-atm-mist .section-atm-wash {
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(236, 253, 245, 0.5), transparent 60%),
+    radial-gradient(ellipse 40% 30% at 15% 100%, rgba(224, 242, 254, 0.28), transparent 55%);
+}
+
+.section-atm-bloom .section-atm-wash {
+  background:
+    radial-gradient(ellipse 45% 35% at 90% 12%, rgba(254, 205, 211, 0.14), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 8% 90%, rgba(167, 243, 208, 0.14), transparent 55%);
+}
+
+.section-atm-map .section-atm-wash {
+  background:
+    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(167, 243, 208, 0.18), transparent 55%),
+    radial-gradient(ellipse 40% 30% at 85% 80%, rgba(16, 185, 129, 0.1), transparent 55%);
+}
+
+.section-atm-rays {
+  position: absolute;
+  inset: 0;
+  background:
+    conic-gradient(
+      from 200deg at 70% -5%,
+      transparent 0deg,
+      rgba(255, 251, 235, 0.45) 14deg,
+      transparent 32deg,
+      rgba(254, 243, 199, 0.28) 52deg,
+      transparent 78deg
+    );
+  mix-blend-mode: soft-light;
+  opacity: 0.78;
+  animation: anime-ray-breathe 12s ease-in-out infinite;
+}
+
+.section-atm-cloud {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(22px);
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+.section-atm-cloud-a {
+  width: min(38vw, 320px);
+  height: min(14vw, 110px);
+  top: 8%;
+  left: -6%;
+  animation: anime-cloud-drift 40s linear infinite;
+}
+
+.section-atm-cloud-b {
+  width: min(32vw, 280px);
+  height: min(12vw, 96px);
+  top: 55%;
+  right: -8%;
+  background: rgba(224, 242, 254, 0.42);
+  animation: anime-cloud-drift 50s linear infinite reverse;
+}
+
+.section-atm-motes {
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 18% 22%, rgba(255, 255, 255, 0.85) 0 2px, transparent 3px),
+    radial-gradient(circle at 72% 38%, rgba(253, 224, 71, 0.75) 0 2px, transparent 3px),
+    radial-gradient(circle at 44% 68%, rgba(167, 243, 208, 0.75) 0 2px, transparent 3px),
+    radial-gradient(circle at 86% 74%, rgba(255, 255, 255, 0.7) 0 2px, transparent 3px),
+    radial-gradient(circle at 30% 85%, rgba(186, 230, 253, 0.7) 0 1.5px, transparent 2.5px);
+  animation: mote-drift 18s ease-in-out infinite alternate;
+  opacity: 0.9;
+}
+
+.section-atm-haze {
+  position: absolute;
+  inset-x: 0;
+  bottom: 0;
+  height: 32%;
+  background: linear-gradient(to top, rgba(167, 243, 208, 0.12), transparent 70%);
+}
+
+@keyframes mote-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(0, -12px, 0);
+  }
+}
+
+.calm-card {
+  position: relative;
+  transition:
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease;
+}
+
+.calm-card::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  opacity: 0;
+  background: radial-gradient(circle at 20% 0%, rgba(167, 243, 208, 0.35), transparent 45%);
+  transition: opacity 0.4s ease;
+  z-index: 0;
+}
+
+.calm-card:hover::after {
+  opacity: 1;
+}
+
+.glass.calm-card:hover,
+.calm-card:hover {
+  box-shadow:
+    0 18px 40px rgba(16, 185, 129, 0.12),
+    0 4px 14px rgba(15, 23, 42, 0.06);
+  border-color: rgba(16, 185, 129, 0.28);
+}
+
+/* Soft interactive chips / pills */
+.calm-chip {
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.3s ease,
+    color 0.3s ease,
+    box-shadow 0.35s ease;
+}
+
+.calm-chip:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.12);
+}
+
+/* ── Professional side rails (soft light + structure) ─── */
+.side-rail-wash {
+  position: absolute;
+  inset: 0;
+}
+
+.side-rail-wash-l {
+  background: linear-gradient(100deg, rgba(236, 253, 245, 0.55) 0%, rgba(224, 242, 254, 0.2) 40%, transparent 72%);
+}
+
+.side-rail-wash-r {
+  background: linear-gradient(260deg, rgba(236, 253, 245, 0.5) 0%, rgba(224, 242, 254, 0.18) 40%, transparent 72%);
+}
+
+.side-rail-veil {
+  position: absolute;
+  inset: 8% 18% 12% 12%;
+  border-radius: 2rem;
+  opacity: 0.35;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35), transparent 40%),
+    radial-gradient(ellipse at 30% 20%, rgba(16, 185, 129, 0.08), transparent 60%);
+  border: 1px solid rgba(16, 185, 129, 0.08);
+  animation: side-rail-breathe 14s ease-in-out infinite alternate;
+}
+
+.side-rail-veil-r {
+  inset: 10% 12% 14% 20%;
+  animation-delay: -4s;
+}
+
+.side-rail-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(18px);
+  opacity: 0.55;
+  animation: side-rail-orb-drift 16s ease-in-out infinite alternate;
+}
+
+.side-rail-orb-l-1 {
+  left: 12%;
+  top: 18%;
+  width: 120px;
+  height: 120px;
+  background: rgba(167, 243, 208, 0.45);
+}
+
+.side-rail-orb-l-2 {
+  left: 28%;
+  top: 52%;
+  width: 90px;
+  height: 90px;
+  background: rgba(186, 230, 253, 0.4);
+  animation-duration: 20s;
+  animation-delay: -3s;
+}
+
+.side-rail-orb-l-3 {
+  left: 18%;
+  top: 72%;
+  width: 70px;
+  height: 70px;
+  background: rgba(16, 185, 129, 0.18);
+  animation-duration: 18s;
+  animation-delay: -7s;
+}
+
+.side-rail-orb-r-1 {
+  right: 10%;
+  top: 22%;
+  width: 130px;
+  height: 130px;
+  background: rgba(186, 230, 253, 0.42);
+}
+
+.side-rail-orb-r-2 {
+  right: 26%;
+  top: 48%;
+  width: 88px;
+  height: 88px;
+  background: rgba(167, 243, 208, 0.4);
+  animation-duration: 19s;
+  animation-delay: -5s;
+}
+
+.side-rail-orb-r-3 {
+  right: 16%;
+  top: 74%;
+  width: 64px;
+  height: 64px;
+  background: rgba(52, 211, 153, 0.2);
+  animation-duration: 17s;
+  animation-delay: -8s;
+}
+
+.side-rail-line {
+  position: absolute;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(16, 185, 129, 0.28), transparent);
+  opacity: 0.7;
+  animation: side-rail-line-pulse 8s ease-in-out infinite;
+}
+
+.side-rail-line-l-1 {
+  left: 38%;
+  top: 16%;
+  height: 42%;
+}
+
+.side-rail-line-l-2 {
+  left: 56%;
+  top: 38%;
+  height: 36%;
+  animation-delay: -2.5s;
+  opacity: 0.45;
+}
+
+.side-rail-line-r-1 {
+  right: 40%;
+  top: 18%;
+  height: 44%;
+}
+
+.side-rail-line-r-2 {
+  right: 58%;
+  top: 40%;
+  height: 34%;
+  animation-delay: -3s;
+  opacity: 0.45;
+}
+
+.side-rail-node {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: rgba(16, 185, 129, 0.55);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.08);
+  animation: side-rail-node-glow 5.5s ease-in-out infinite;
+}
+
+.side-rail-node-l-1 { left: 36%; top: 28%; }
+.side-rail-node-l-2 { left: 54%; top: 48%; animation-delay: -1.8s; }
+.side-rail-node-l-3 { left: 40%; top: 66%; animation-delay: -3.2s; background: rgba(56, 189, 248, 0.5); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.08); }
+
+.side-rail-node-r-1 { right: 38%; top: 30%; }
+.side-rail-node-r-2 { right: 56%; top: 50%; animation-delay: -2s; background: rgba(56, 189, 248, 0.5); box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.08); }
+.side-rail-node-r-3 { right: 42%; top: 68%; animation-delay: -3.6s; }
+
+.side-rail-compact .side-rail-veil {
+  opacity: 0.22;
+}
+
+.side-rail-compact .side-rail-orb {
+  opacity: 0.35;
+  filter: blur(22px);
+}
+
+/* Traveling energy on the rails — transform-only (no layout thrash) */
+.side-rail-pulse {
+  position: absolute;
+  left: 38%;
+  top: 12%;
+  width: 2px;
+  height: 14%;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, transparent, #10b981, transparent);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.55);
+  animation: side-rail-pulse-run 5.2s linear infinite;
+  will-change: transform, opacity;
+}
+
+.side-rail-pulse-r {
+  left: auto;
+  right: 40%;
+  animation-delay: -2.2s;
+}
+
+.side-rail-arc {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border-radius: 9999px;
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  animation: side-rail-arc-spin 22s linear infinite;
+}
+
+.side-rail-arc-l {
+  left: 22%;
+  top: 38%;
+  border-top-color: rgba(16, 185, 129, 0.55);
+  border-right-color: rgba(56, 189, 248, 0.35);
+}
+
+.side-rail-arc-r {
+  right: 20%;
+  top: 44%;
+  border-bottom-color: rgba(16, 185, 129, 0.55);
+  border-left-color: rgba(56, 189, 248, 0.35);
+  animation-direction: reverse;
+}
+
+@keyframes side-rail-pulse-run {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scaleY(0.6);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(220%) scaleY(1.2);
+  }
+}
+
+@keyframes side-rail-arc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes side-rail-dash-slide {
+  0%,
+  100% {
+    transform: translateX(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateX(12px);
+    opacity: 0.8;
+  }
+}
+
+@keyframes side-rail-breathe {
+  from {
+    opacity: 0.22;
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 0.4;
+    transform: translate3d(0, -6px, 0);
+  }
+}
+
+@keyframes side-rail-orb-drift {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  to {
+    transform: translate3d(6px, -10px, 0) scale(1.06);
+  }
+}
+
+@keyframes side-rail-line-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes side-rail-node-glow {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scale(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+/* ── Global motion polish ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .status-ring::after,
+  .live-grid,
+  .intro-glint::after,
+  .scene-speedlines,
+  .anime-godrays,
+  .anime-flare,
+  .anime-cloud,
+  .anime-wind,
+  .anime-petal,
+  .anime-spark,
+  .calm-global-wash,
+  .site-atm-rays,
+  .site-atm-flare,
+  .site-atm-cloud,
+  .site-atm-spark,
+  .section-atm-rays,
+  .section-atm-cloud,
+  .section-atm-motes,
+  .side-rail-veil,
+  .side-rail-orb,
+  .side-rail-line,
+  .side-rail-node,
+  .side-rail-pulse,
+  .side-rail-arc,
+  .side-rail-dash,
+  .scroll-streak {
+    animation: none !important;
+  }
+
+  body.elite-cursor-on,
+  body.elite-cursor-on a,
+  body.elite-cursor-on button {
+    cursor: auto;
+  }
+
+  .ambient-blob {
+    animation: none !important;
+  }
+}
+
+body {
+  overscroll-behavior-y: none;
+}
+
+/* Elite cursor — hide system pointer on fine desktops when active */
+body.elite-cursor-on,
+body.elite-cursor-on a,
+body.elite-cursor-on button {
+  cursor: none;
+}
+
+/* CSS ambient blobs (replaced Framer particle storm) */
+.ambient-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(40px);
+  opacity: 0.45;
+  will-change: transform;
+}
+
+.ambient-blob-a {
+  top: 12%;
+  left: 8%;
+  width: min(28vw, 280px);
+  height: min(28vw, 280px);
+  background: rgba(167, 243, 208, 0.35);
+  animation: ambient-drift 22s ease-in-out infinite alternate;
+}
+
+.ambient-blob-b {
+  top: 48%;
+  right: 10%;
+  width: min(24vw, 240px);
+  height: min(24vw, 240px);
+  background: rgba(186, 230, 253, 0.3);
+  animation: ambient-drift 28s ease-in-out infinite alternate-reverse;
+}
+
+.ambient-blob-c {
+  bottom: 10%;
+  left: 40%;
+  width: min(20vw, 200px);
+  height: min(20vw, 200px);
+  background: rgba(16, 185, 129, 0.16);
+  animation: ambient-drift 24s ease-in-out infinite alternate;
+  animation-delay: -6s;
+}
+
+@keyframes ambient-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(18px, -22px, 0);
+  }
+}
+
+/* Scroll velocity streaks */
+.scroll-streak {
+  position: absolute;
+  inset: 0;
+  opacity: calc(0.35 + var(--scroll-vel, 0) * 0.8);
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0 10px,
+    rgba(16, 185, 129, 0.12) 10px 11px
+  );
+  mask-image: linear-gradient(180deg, transparent, #000 30%, #000 70%, transparent);
+  animation: scroll-streak-flow 0.55s linear infinite;
+}
+
+.scroll-streak-l {
+  transform: skewX(-8deg);
+}
+
+.scroll-streak-r {
+  transform: skewX(8deg);
+  animation-direction: reverse;
+}
+
+.scroll-depth-veil {
+  background:
+    radial-gradient(ellipse at 50% 0%, transparent 40%, rgba(15, 23, 42, 0.05) 100%),
+    radial-gradient(ellipse at 50% 100%, transparent 40%, rgba(15, 23, 42, 0.05) 100%);
+  transition: opacity 0.15s linear;
+}
+
+@keyframes scroll-streak-flow {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 44px;
+  }
+}
+
+/* Elite surface sheen on hover */
+.elite-surface {
+  position: relative;
+  overflow: hidden;
+}
+
+.elite-surface::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 32%,
+    rgba(255, 255, 255, 0.38) 46%,
+    rgba(167, 243, 208, 0.22) 52%,
+    transparent 68%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  z-index: 1;
+}
+
+.elite-surface:hover::before {
+  transform: translateX(120%);
+}
+
+.fx-tag {
+  transition:
+    transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.3s ease;
+}
+
+.fx-tag:hover {
+  transform: translateY(-2px);
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.1);
+}
+
+/* view-rise removed — opacity-scrubbed scroll animations caused blank content while fast-scrolling */

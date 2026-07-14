@@ -47,8 +47,8 @@ function ParallaxCard({
     const scaleVal = useMotionValue(1);
 
     const springConfig = { stiffness: 200, damping: 22, mass: 0.6 };
-    const rotateX = useSpring(useTransform(rawY, [-0.5, 0.5], [8, -8]), springConfig);
-    const rotateY = useSpring(useTransform(rawX, [-0.5, 0.5], [-8, 8]), springConfig);
+    const rotateX = useSpring(useTransform(rawY, [-0.5, 0.5], [4, -4]), springConfig);
+    const rotateY = useSpring(useTransform(rawX, [-0.5, 0.5], [-4, 4]), springConfig);
     const scale = useSpring(scaleVal, { stiffness: 250, damping: 22 });
 
     const [glowing, setGlowing] = useState(false);
@@ -97,7 +97,7 @@ export default function ProjectCard(props: ProjectCardProps) {
     } = props;
 
     return (
-        <ParallaxCard className="glass rounded-3xl overflow-hidden flex flex-col h-full bg-white/80 backdrop-blur-xl">
+        <ParallaxCard className="glass calm-card elite-surface rounded-3xl overflow-hidden flex flex-col h-full bg-white">
             {/* Emerald top bar */}
             <div className="h-[3px] w-full bg-gradient-to-r from-[#10b981] to-[#34d399] shrink-0" />
 
@@ -166,7 +166,7 @@ export default function ProjectCard(props: ProjectCardProps) {
                     {tags.map((tag) => (
                         <span
                             key={tag}
-                            className="px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-500"
+                            className="fx-tag px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-500"
                         >
                             {tag}
                         </span>
