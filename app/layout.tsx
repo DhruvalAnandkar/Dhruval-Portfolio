@@ -15,7 +15,7 @@ const lora = Lora({
   weight: ["400", "500"],
 });
 
-const siteUrl = "https://dhruval-portfolio-two.vercel.app";
+const siteUrl = "https://dhruvalanandkar.com";
 const siteTitle = "Dhruval Anandkar | Portfolio";
 const siteDescription =
   "Dhruval Anandkar — CS (Honors) @ Ashland University. Software & Systems Engineer: Data Engineering, Full-Stack, AI/ML. I build tech that works.";
