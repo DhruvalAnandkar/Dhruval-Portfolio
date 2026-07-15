@@ -2,8 +2,11 @@
 
 const chips = [
     "Associate · India",
-    "Hackathons back home",
+    "Hackathons",
     "CS Honors @ Ashland",
+    "Axiom · Devpost",
+    "ARIA · Accessibility",
+    "CortexLab · FalconHack",
     "Realtime transit",
     "Agentic AI",
     "ACM-W President",

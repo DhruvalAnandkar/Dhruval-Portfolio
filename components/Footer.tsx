@@ -1,12 +1,18 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Code2, Github, Linkedin, Mail } from "lucide-react";
+import { Github, Linkedin, Mail, ExternalLink } from "lucide-react";
 import SectionFX from "./SectionFX";
+import BrandMark from "./BrandMark";
 
 const socials = [
-    { icon: Github, href: "https://github.com/dhruvalanandkar", label: "GitHub" },
-    { icon: Linkedin, href: "https://linkedin.com/in/dhruvalanandkar", label: "LinkedIn" },
+    { icon: Github, href: "https://github.com/DhruvalAnandkar", label: "GitHub" },
+    { icon: Linkedin, href: "https://www.linkedin.com/in/dhruvalanandkar", label: "LinkedIn" },
+    {
+        icon: ExternalLink,
+        href: "https://devpost.com/DhruvalAnandkar",
+        label: "Devpost",
+    },
     { icon: Mail, href: "mailto:dhruvalabroad@gmail.com", label: "Email" },
 ];
 
@@ -34,9 +40,7 @@ export default function Footer() {
                         transition={{ duration: 0.4 }}
                     >
                         <div className="flex items-center gap-2.5 mb-3">
-                            <div className="w-8 h-8 rounded-xl bg-[#10b981] flex items-center justify-center shadow-md shadow-emerald-200/60">
-                                <Code2 size={15} className="text-white" />
-                            </div>
+                            <BrandMark className="w-8 h-8 rounded-xl shadow-md shadow-slate-900/20" />
                             <span className="font-bold text-slate-800">Dhruval Anandkar</span>
                         </div>
                         <p className="text-slate-500 text-sm leading-relaxed">

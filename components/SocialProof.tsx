@@ -12,6 +12,8 @@ import {
     Shield,
     Briefcase,
     Mic,
+    Zap,
+    ExternalLink,
 } from "lucide-react";
 import SectionFX from "./SectionFX";
 
@@ -51,6 +53,27 @@ const honors = [
         title: "2nd Rank · Parul University",
         body: "Certificate of Excellence for 2nd place in Computer Science.",
         year: "2022",
+    },
+];
+
+const hackathons = [
+    {
+        title: "Axiom: Precision Pool Training",
+        body: "Real-time shot geometry overlays with an AI coach that explains the math so you can master the table.",
+        meta: "Hackathon · USA",
+        href: "https://devpost.com/DhruvalAnandkar",
+    },
+    {
+        title: "ARIA",
+        body: "ASL + emotion to speech for signers; obstacle detection and spoken directions for blind users. Edge AI on Jetson & phone.",
+        meta: "Kent Hack Enough 2026 · with Aniket Patel",
+        href: "https://devpost.com/DhruvalAnandkar",
+    },
+    {
+        title: "CortexLab",
+        body: "Multi-agent GenAI research assistant from idea to publishable draft. FalconHack build with a multi-person team.",
+        meta: "Google FalconHack · Devpost",
+        href: "https://devpost.com/software/cortexlab",
     },
 ];
 
@@ -125,7 +148,7 @@ export default function SocialProof() {
                         Proof in the ribbon
                     </h2>
                     <p className="text-slate-500 text-base mt-2 max-w-md">
-                        Scholarships, challenges, and certifications that back the work.
+                        Scholarships, USA hackathons on Devpost, and certifications that back the work.
                     </p>
                 </motion.div>
 
@@ -159,6 +182,57 @@ export default function SocialProof() {
                             </motion.div>
                         );
                     })}
+                </div>
+
+                <motion.div
+                    initial={{ opacity: 0.55, y: 16 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.55, y: 12 }}
+                    transition={{ duration: 0.5, delay: 0.06 }}
+                    className="mb-5 mt-2 flex flex-wrap items-end justify-between gap-3"
+                >
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <Zap size={16} className="text-[#10b981]" />
+                            <h3 className="text-xl sm:text-2xl font-extrabold text-slate-900">
+                                Hackathons
+                            </h3>
+                        </div>
+                        <p className="text-slate-500 text-sm max-w-lg">
+                            Three shipped builds on Devpost · 3 hackathons · team + solo AI systems work.
+                        </p>
+                    </div>
+                    <a
+                        href="https://devpost.com/DhruvalAnandkar"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-sm font-bold text-[#059669] hover:text-[#10b981] transition-colors"
+                    >
+                        Devpost profile <ExternalLink size={13} />
+                    </a>
+                </motion.div>
+
+                <div className="grid sm:grid-cols-3 gap-3 mb-12">
+                    {hackathons.map((hack, i) => (
+                        <motion.a
+                            key={hack.title}
+                            href={hack.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            initial={{ opacity: 0.55, y: 20 }}
+                            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.6, y: 14 }}
+                            transition={{ duration: 0.45, delay: 0.08 + i * 0.05 }}
+                            whileHover={{ y: -6, scale: 1.02 }}
+                            className="glass calm-card elite-surface rounded-2xl p-4 shadow-md hover:shadow-xl transition-shadow block"
+                        >
+                            <p className="text-[10px] font-bold uppercase tracking-wider text-[#10b981] mb-2">
+                                {hack.meta}
+                            </p>
+                            <h4 className="font-extrabold text-slate-800 text-sm leading-snug mb-1.5">
+                                {hack.title}
+                            </h4>
+                            <p className="text-slate-500 text-xs leading-relaxed">{hack.body}</p>
+                        </motion.a>
+                    ))}
                 </div>
 
                 <motion.div

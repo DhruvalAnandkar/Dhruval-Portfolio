@@ -69,12 +69,12 @@ const flagshipProjects: ProjectCardProps[] = [
 const moreProjects: ProjectCardProps[] = [
     {
         title: "Axiom: Precision Athletics",
-        role: "Full-Stack · Physics Engine + LangGraph Coach",
+        role: "Hackathon · Physics Engine + LangGraph Coach",
         category: "AI / Systems",
         categoryIcon: <Target size={11} />,
-        tagline: "Deterministic billiards physics; AI only narrates",
+        tagline: "Real-time shot geometry with an AI coach that explains the math",
         description:
-            "Billiards training platform that separates physics from coaching. Ghost ball, cut angle, and aim vectors come from Python (<200ms). An optional LangGraph pipeline narrates the shot and flags risk.",
+            "Stop scrolling for generic pool tips. Axiom overlays the exact, invisible geometry of your shot in real time. Ghost ball, cut angle, and aim vectors come from a deterministic Python physics engine; an optional LangGraph coach narrates the shot and flags risk.",
         keyFeature:
             "Click-to-aim table, OpenCV.js camera aiming (beta), PWA shell, JWT auth with per-user shot stats.",
         technicalImpact:
@@ -82,7 +82,9 @@ const moreProjects: ProjectCardProps[] = [
         tags: ["React 19", "Vite", "FastAPI", "LangGraph", "Socket.io", "Docker Compose"],
         accent: "emerald",
         projectIcon: <Target size={18} />,
+        badge: "Hackathon",
         githubUrl: "https://github.com/DhruvalAnandkar/axiom-core",
+        devpostUrl: "https://devpost.com/DhruvalAnandkar",
     },
     {
         title: "JobGenie AI",
@@ -104,19 +106,21 @@ const moreProjects: ProjectCardProps[] = [
     },
     {
         title: "CortexLab",
-        role: "Backend Architect · FastAPI + LangGraph",
+        role: "Hackathon · FastAPI + LangGraph · FalconHack",
         category: "AI Research",
         categoryIcon: <Bot size={11} />,
-        tagline: "Multi-agent research assistant",
+        tagline: "From research idea to publishable draft in days, not months",
         description:
-            "Built for Google FalconHack. LangGraph + Gemini agents scan literature, spot gaps, and draft structured paper outlines.",
+            "Built for Google FalconHack with Aniket Patel, Damien, and Dominic. LangGraph + Gemini agents scan literature, uncover research gaps, design experiments, and draft structured academic papers.",
         keyFeature: "Planner → Researcher → Writer pipeline with citation-aware .docx export.",
         technicalImpact:
-            "LangGraph state machine can replan when a path dead-ends.",
+            "Multi-agent LangGraph state machine can replan when a research path dead-ends.",
         tags: ["FastAPI", "LangGraph", "Gemini API", "PostgreSQL", "Python"],
         accent: "emerald",
         projectIcon: <Cpu size={18} />,
+        badge: "Hackathon",
         githubUrl: "https://github.com/DhruvalAnandkar/CortexLab",
+        devpostUrl: "https://devpost.com/software/cortexlab",
     },
     {
         title: "Vajra-MLOps",
@@ -139,21 +143,23 @@ const moreProjects: ProjectCardProps[] = [
     },
     {
         title: "ARIA",
-        role: "Team project with Aniket Patel · Kent Hack Enough 2026",
+        role: "Hackathon · Kent Hack Enough 2026 · with Aniket Patel",
         category: "Accessibility",
         categoryIcon: <Users size={11} />,
-        tagline: "Adaptive Real-time Intelligence Assistant",
+        tagline: "Voice for signers · spatial awareness for blind users",
         description:
-            "Team accessibility app (fork of Aniket25042003/ARIA). SIGN mode turns ASL + emotion into speech via ElevenLabs. GUIDE mode helps with obstacles and walking directions. Expo client + FastAPI on a Jetson Orin Nano.",
+            "ARIA gives voice to signers and spatial awareness to blind users: real-time ASL + emotion to expressive speech; local obstacle detection + spoken walking directions. Edge AI on Jetson & phone.",
         keyFeature:
-            "Vision fallback chain (Gemini → OpenAI → Claude → YOLOv8) plus WebSocket SIGN sessions and Maps navigation.",
+            "SIGN mode via ElevenLabs; GUIDE mode with Maps directions; vision fallback chain (Gemini → OpenAI → Claude → YOLOv8).",
         technicalImpact:
-            "AI runs on the Jetson; data lives in one SQLite file.",
+            "AI runs on the Jetson Orin Nano; Expo client + FastAPI keep the edge loop tight.",
         tags: ["Python", "FastAPI", "React Native", "Expo", "Jetson", "ElevenLabs"],
         accent: "emerald",
         projectIcon: <Accessibility size={18} />,
+        badge: "Hackathon",
         githubUrl: "https://github.com/DhruvalAnandkar/ARIA1",
         liveUrl: "https://aria-1-chi.vercel.app",
+        devpostUrl: "https://devpost.com/DhruvalAnandkar",
     },
     {
         title: "AgriScience Web",
@@ -249,6 +255,11 @@ function ProjectAccordionItem({
                         <h3 className="font-extrabold text-slate-900 text-sm sm:text-base truncate">
                             {project.title}
                         </h3>
+                        {project.badge && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-[#059669] border border-emerald-100">
+                                {project.badge}
+                            </span>
+                        )}
                         {project.isLive && (
                             <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-[#10b981]">
                                 Live
@@ -323,26 +334,50 @@ function ProjectAccordionItem({
                                 ))}
                             </div>
 
-                            <div className="flex gap-2">
-                                {project.githubUrl && (
+                            <div className="flex flex-col gap-2">
+                                <div className="flex gap-2">
+                                    {project.liveUrl ? (
+                                        <>
+                                            {project.githubUrl && (
+                                                <a
+                                                    href={project.githubUrl}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-xs font-bold hover:border-slate-300 hover:text-slate-900 transition-all"
+                                                >
+                                                    <Github size={13} /> GitHub
+                                                </a>
+                                            )}
+                                            <a
+                                                href={project.liveUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-[#10b981] transition-colors"
+                                            >
+                                                <ExternalLink size={13} /> Live Demo
+                                            </a>
+                                        </>
+                                    ) : (
+                                        project.githubUrl && (
+                                            <a
+                                                href={project.githubUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-[#10b981] transition-colors"
+                                            >
+                                                <ExternalLink size={13} /> View Project
+                                            </a>
+                                        )
+                                    )}
+                                </div>
+                                {project.devpostUrl && (
                                     <a
-                                        href={project.githubUrl}
+                                        href={project.devpostUrl}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-xs font-bold hover:border-slate-300 hover:text-slate-900 transition-all"
+                                        className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl border border-emerald-100 bg-emerald-50/70 text-[#059669] text-xs font-bold hover:bg-emerald-50 transition-colors"
                                     >
-                                        <Github size={13} /> GitHub
-                                    </a>
-                                )}
-                                {(project.liveUrl || project.githubUrl) && (
-                                    <a
-                                        href={project.liveUrl ?? project.githubUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-[#10b981] transition-colors"
-                                    >
-                                        <ExternalLink size={13} />
-                                        {project.liveUrl ? "Live Demo" : "View Project"}
+                                        View on Devpost ↗
                                     </a>
                                 )}
                             </div>
@@ -423,9 +458,14 @@ export default function Projects() {
                         More projects
                     </span>
                     <div className="flex-1 h-px bg-slate-100" />
-                    <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">
-                        Click a row to expand
-                    </span>
+                    <a
+                        href="https://devpost.com/DhruvalAnandkar"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[11px] font-bold text-[#059669] hover:text-[#10b981] transition-colors shrink-0"
+                    >
+                        Devpost gallery ↗
+                    </a>
                 </div>
 
                 <div className="space-y-2.5">

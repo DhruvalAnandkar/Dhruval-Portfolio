@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Code2 } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Magnetic from "./Magnetic";
+import BrandMark from "./BrandMark";
 
 const navLinks = [
     { href: "#world", label: "Map" },
@@ -66,9 +67,7 @@ export default function Navbar() {
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.97 }}
                     >
-                        <div className="w-8 h-8 rounded-xl bg-[#10b981] flex items-center justify-center shadow-md shadow-emerald-200/60">
-                            <Code2 size={15} className="text-white" strokeWidth={2.5} />
-                        </div>
+                        <BrandMark className="w-8 h-8 rounded-xl shadow-md shadow-slate-900/20" />
                         <span className="font-bold text-slate-800 text-sm tracking-tight">Dhruval</span>
                     </motion.a>
 
