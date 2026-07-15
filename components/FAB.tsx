@@ -30,10 +30,23 @@ export default function FAB() {
                     setStatus("idle");
                     setForm({ name: "", email: "", message: "" });
                 }, 3000);
-            } else {
-                setStatus("error");
-                setTimeout(() => setStatus("idle"), 3500);
+                return;
             }
+
+            // If email API isn't configured, open the user's mail app as a fallback
+            const data = (await res.json().catch(() => ({}))) as { code?: string };
+            if (data.code === "NO_API_KEY") {
+                const subject = encodeURIComponent(`Portfolio message from ${form.name}`);
+                const body = encodeURIComponent(
+                    `${form.message}\n\n—\nFrom: ${form.name}\nEmail: ${form.email}`
+                );
+                window.location.href = `mailto:dhruvalabroad@gmail.com?subject=${subject}&body=${body}`;
+                setStatus("idle");
+                return;
+            }
+
+            setStatus("error");
+            setTimeout(() => setStatus("idle"), 3500);
         } catch {
             setStatus("error");
             setTimeout(() => setStatus("idle"), 3500);

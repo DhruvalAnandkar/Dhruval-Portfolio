@@ -16,14 +16,17 @@ const lora = Lora({
 });
 
 const siteUrl = "https://dhruval-portfolio-two.vercel.app";
+const siteTitle = "Dhruval Anandkar | Portfolio";
+const siteDescription =
+  "Dhruval Anandkar — CS (Honors) @ Ashland University. Software & Systems Engineer: Data Engineering, Full-Stack, AI/ML. I build tech that works.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Dhruval Anandkar | Portfolio",
-  description:
-    "CS (Honors) @ Ashland University. Software & Systems Engineer building scalable backends and intelligent applications.",
+  title: siteTitle,
+  description: siteDescription,
   keywords: [
     "Dhruval Anandkar",
+    "dhruval anandkar",
     "Portfolio",
     "Software Engineer",
     "Systems",
@@ -31,6 +34,11 @@ export const metadata: Metadata = {
     "Ashland University",
     "Next.js",
   ],
+  authors: [{ name: "Dhruval Anandkar", url: siteUrl }],
+  creator: "Dhruval Anandkar",
+  alternates: {
+    canonical: siteUrl,
+  },
   icons: {
     icon: [
       { url: "/brand-mark.svg", type: "image/svg+xml" },
@@ -39,18 +47,17 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-icon" }],
   },
   openGraph: {
-    title: "Dhruval Anandkar | Portfolio",
-    description:
-      "CS (Honors) @ Ashland University — Data Engineering, Full-Stack, BI. I build tech that works.",
+    title: siteTitle,
+    description: siteDescription,
     url: siteUrl,
     siteName: "Dhruval Anandkar Portfolio",
     type: "website",
+    locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dhruval Anandkar | Portfolio",
-    description:
-      "CS (Honors) @ Ashland University — Data Engineering, Full-Stack, BI. I build tech that works.",
+    title: siteTitle,
+    description: siteDescription,
   },
 };
 
@@ -78,8 +85,8 @@ export default function RootLayout({
                 name: "Ashland University",
               },
               sameAs: [
-                "https://github.com/dhruvalanandkar",
-                "https://linkedin.com/in/dhruvalanandkar",
+                "https://github.com/DhruvalAnandkar",
+                "https://www.linkedin.com/in/dhruvalanandkar",
                 "https://devpost.com/DhruvalAnandkar",
               ],
             }),

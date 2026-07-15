@@ -23,6 +23,10 @@ export interface ProjectCardProps {
     tags: string[];
     githubUrl?: string;
     liveUrl?: string;
+    /** Devpost gallery link for hackathon builds */
+    devpostUrl?: string;
+    /** Shown as an emerald pill (e.g. "Hackathon") */
+    badge?: string;
     accent: AccentColor;
     /** Lucide icon element — no emoji */
     projectIcon: React.ReactNode;
@@ -92,6 +96,8 @@ export default function ProjectCard(props: ProjectCardProps) {
         tags,
         githubUrl,
         liveUrl,
+        devpostUrl,
+        badge,
         projectIcon,
         isLive,
     } = props;
@@ -104,7 +110,7 @@ export default function ProjectCard(props: ProjectCardProps) {
             <div className="flex flex-col flex-1 p-6 sm:p-7">
                 {/* Row 1: Icon + Category + Live */}
                 <div className="flex items-start justify-between gap-3 mb-5">
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 flex-wrap">
                         {/* Project icon — Lucide, slate-500 at rest */}
                         <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-500 shrink-0 group-hover:text-[#10b981] transition-colors duration-200">
                             {projectIcon}
@@ -113,6 +119,11 @@ export default function ProjectCard(props: ProjectCardProps) {
                             {categoryIcon}
                             {category}
                         </span>
+                        {badge && (
+                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-emerald-50 text-[#059669] text-xs font-bold border border-emerald-100">
+                                {badge}
+                            </span>
+                        )}
                     </div>
                     {isLive && (
                         <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-[#10b981] text-xs font-bold shrink-0">
@@ -173,38 +184,52 @@ export default function ProjectCard(props: ProjectCardProps) {
                     ))}
                 </div>
 
-                {/* Actions */}
-                <div className="flex gap-2 mt-auto">
-                    {githubUrl && (
+                {/* Actions: Live Demo + GitHub when both exist; single View Project when only GitHub */}
+                <div className="flex flex-col gap-2 mt-auto">
+                    <div className="flex gap-2">
+                        {liveUrl ? (
+                            <>
+                                {githubUrl && (
+                                    <a
+                                        href={githubUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-xs font-bold hover:border-slate-300 hover:text-slate-900 transition-all duration-200"
+                                    >
+                                        <Github size={13} /> GitHub
+                                    </a>
+                                )}
+                                <a
+                                    href={liveUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-[#10b981] transition-colors duration-300 shadow-sm"
+                                >
+                                    <ExternalLink size={13} /> Live Demo
+                                </a>
+                            </>
+                        ) : (
+                            githubUrl && (
+                                <a
+                                    href={githubUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-[#10b981] transition-colors duration-300 shadow-sm"
+                                >
+                                    <ExternalLink size={13} /> View Project
+                                </a>
+                            )
+                        )}
+                    </div>
+                    {devpostUrl && (
                         <a
-                            href={githubUrl}
+                            href={devpostUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 text-xs font-bold hover:border-slate-300 hover:text-slate-900 transition-all duration-200"
+                            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-xl border border-emerald-100 bg-emerald-50/70 text-[#059669] text-xs font-bold hover:bg-emerald-50 transition-colors"
                         >
-                            <Github size={13} /> GitHub
+                            View on Devpost ↗
                         </a>
-                    )}
-                    {liveUrl ? (
-                        <a
-                            href={liveUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-[#10b981] transition-colors duration-300 shadow-sm"
-                        >
-                            <ExternalLink size={13} /> Live Demo
-                        </a>
-                    ) : (
-                        githubUrl && (
-                            <a
-                                href={githubUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-[#10b981] transition-colors duration-300 shadow-sm"
-                            >
-                                <ExternalLink size={13} /> View Project
-                            </a>
-                        )
                     )}
                 </div>
             </div>
