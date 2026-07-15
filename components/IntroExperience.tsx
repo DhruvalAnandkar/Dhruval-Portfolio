@@ -194,12 +194,18 @@ export default function IntroExperience({ children }: { children: React.ReactNod
         };
     }, [mounted, handoff, clearTimers]);
 
-    // SSR / first paint cover
-    if (!mounted) {
-        return <div className="fixed inset-0 z-[100] bg-[#050b09]" aria-hidden />;
-    }
-
     const burst = phase === "spark" || phase === "brand" || phase === "tag";
+
+    // Always keep page content in the DOM (incl. SSR) so Google can index it.
+    // Intro overlay covers the UI for humans until handoff.
+    if (!mounted) {
+        return (
+            <SiteReadyContext.Provider value={true}>
+                <div className="site-shell">{children}</div>
+                <div className="fixed inset-0 z-[100] bg-[#050b09]" aria-hidden />
+            </SiteReadyContext.Provider>
+        );
+    }
 
     return (
         <SiteReadyContext.Provider value={siteReady}>
@@ -393,18 +399,19 @@ export default function IntroExperience({ children }: { children: React.ReactNod
                 )}
             </AnimatePresence>
 
-            {/* Content mounts only after handoff — prevents map flash / hero stall */}
-            {siteReady ? (
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                    className="site-shell"
-                >
-                    {children}
-                </motion.div>
-            ) : (
-                !showIntro && <div className="fixed inset-0 z-[90] bg-[#050b09]" aria-hidden />
+            {/* Content stays mounted for crawlers; revealed after intro for humans */}
+            <motion.div
+                initial={false}
+                animate={{ opacity: siteReady ? 1 : 0 }}
+                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                className="site-shell"
+                style={{ pointerEvents: siteReady ? "auto" : "none" }}
+                aria-hidden={!siteReady}
+            >
+                {children}
+            </motion.div>
+            {!siteReady && !showIntro && (
+                <div className="fixed inset-0 z-[90] bg-[#050b09]" aria-hidden />
             )}
         </SiteReadyContext.Provider>
     );
