@@ -18,7 +18,7 @@ const lora = Lora({
 const siteUrl = "https://dhruvalanandkar.com";
 const siteTitle = "Dhruval Anandkar | Portfolio";
 const siteDescription =
-  "Dhruval Anandkar — CS (Honors) @ Ashland University. Software & Systems Engineer: Data Engineering, Full-Stack, AI/ML. I build tech that works.";
+  "An interactive showcase of my work in Data Engineering, Full-Stack Development, and Business Intelligence. Includes deep dives into my Senior Thesis and AI/ML research.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
