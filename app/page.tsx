@@ -1,47 +1,25 @@
-"use client";
+import HomeClient from "@/components/HomeClient";
 
-import IntroExperience from "@/components/IntroExperience";
-import Navbar from "@/components/Navbar";
-import DeferredFX from "@/components/DeferredFX";
-import ScrollProgress from "@/components/ScrollProgress";
-import WorldPath from "@/components/WorldPath";
-import Hero from "@/components/Hero";
-import About from "@/components/About";
-import Skills from "@/components/Skills";
-import Projects from "@/components/Projects";
-import Research from "@/components/Research";
-import SocialProof from "@/components/SocialProof";
-import Timeline from "@/components/Timeline";
-import Volunteering from "@/components/Volunteering";
-import Footer from "@/components/Footer";
-import FAB from "@/components/FAB";
-import QuickNav from "@/components/QuickNav";
-
+/**
+ * Server-rendered identity block so Google always sees name + bio in HTML,
+ * even before the client intro finishes. Matches on-page content (not cloaking).
+ */
 export default function Home() {
   return (
-    <IntroExperience>
-      <ScrollProgress />
-      <DeferredFX />
-
-      <Navbar />
-
-      <main className="relative z-10">
-        <Hero />
-        <div className="section-seam" aria-hidden />
-        <WorldPath />
-        <div className="section-seam" aria-hidden />
-        <About />
-        <Skills />
-        <Projects />
-        <Research />
-        <Timeline />
-        <SocialProof />
-        <Volunteering />
-      </main>
-
-      <Footer />
-      <QuickNav />
-      <FAB />
-    </IntroExperience>
+    <>
+      <section className="sr-only" aria-label="Dhruval Anandkar portfolio summary">
+        <h1>Dhruval Anandkar</h1>
+        <p>
+          CS (Honors) at Ashland University. Software &amp; Systems Engineer
+          building scalable backends and intelligent applications. Data
+          Engineering, Full-Stack, AI/ML.
+        </p>
+        <p>
+          Portfolio: projects, research, skills, experience, and contact at
+          https://dhruvalanandkar.com
+        </p>
+      </section>
+      <HomeClient />
+    </>
   );
 }

@@ -1,114 +1,161 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { createPortal } from "react-dom";
 
-/** Dual-ring cursor — throttled hit-testing, desktop only */
+const HIT =
+    "a, button, [role='button'], input, textarea, label, select, summary, [data-cursor='pointer'], .elite-magnetic, .elite-surface";
+
+/**
+ * Styles injected here so Turbopack CSS cache can't hide the cursor.
+ * Position uses transform only — no size transitions on the tip (avoids micro-lag).
+ */
+const CURSOR_CSS = `
+body.elite-cursor-on, body.elite-cursor-on * { cursor: none !important; }
+.elite-cursor {
+  position: fixed; inset: 0; z-index: 2147483646; pointer-events: none;
+  display: none;
+}
+@media (min-width: 768px) {
+  .elite-cursor { display: block; }
+}
+.elite-cursor-tip {
+  position: fixed; top: 0; left: 0;
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  will-change: transform;
+  transform: translate3d(-100px, -100px, 0);
+}
+.elite-cursor-frame {
+  position: absolute; inset: 7px;
+  border: 1.5px solid transparent;
+  border-radius: 2px;
+  transform: rotate(45deg) scale(0.85);
+  opacity: 0;
+  box-sizing: border-box;
+  transition: opacity 80ms ease, transform 80ms ease, border-color 80ms ease, background-color 80ms ease;
+}
+.elite-cursor-mark {
+  position: relative; z-index: 1;
+  width: 9px; height: 9px;
+  background: #0f172a;
+  border: 1.5px solid #10b981;
+  border-radius: 1.5px;
+  transform: rotate(45deg);
+  box-shadow: 0 1px 3px rgba(15,23,42,0.22);
+  transition: background-color 80ms ease, border-color 80ms ease, box-shadow 80ms ease, transform 80ms ease;
+}
+.elite-cursor-tip.is-hot .elite-cursor-frame {
+  opacity: 1;
+  transform: rotate(45deg) scale(1);
+  border-color: #10b981;
+  background: rgba(16,185,129,0.1);
+}
+.elite-cursor-tip.is-hot .elite-cursor-mark {
+  background: #10b981;
+  border-color: #ecfdf5;
+  box-shadow: 0 0 10px rgba(16,185,129,0.45);
+  transform: rotate(45deg) scale(1.08);
+}
+.elite-cursor-tip.is-down .elite-cursor-mark {
+  transform: rotate(45deg) scale(0.82);
+}
+`;
+
+/**
+ * Professional dual-state cursor — true 1:1 tracking.
+ * Hit-testing runs on a separate rAF so it never delays position updates.
+ */
 export default function EliteCursor() {
     const [on, setOn] = useState(false);
-    const [hovering, setHovering] = useState(false);
-    const [clicking, setClicking] = useState(false);
-    const hoverRef = useRef(false);
-
-    const x = useMotionValue(-100);
-    const y = useMotionValue(-100);
-    const sx = useSpring(x, { stiffness: 420, damping: 28, mass: 0.35 });
-    const sy = useSpring(y, { stiffness: 420, damping: 28, mass: 0.35 });
-    const rx = useSpring(x, { stiffness: 120, damping: 22, mass: 0.5 });
-    const ry = useSpring(y, { stiffness: 120, damping: 22, mass: 0.5 });
+    const [mounted, setMounted] = useState(false);
+    const tipRef = useRef<HTMLDivElement>(null);
+    const pos = useRef({ x: -100, y: -100 });
+    const hot = useRef(false);
 
     useEffect(() => {
-        const fine = window.matchMedia("(pointer: fine)").matches;
-        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection
-            ?.saveData;
-        if (!fine || reduce || saveData) return;
+        setMounted(true);
+        if (!window.matchMedia("(pointer: fine)").matches) return;
+        setOn(true);
+        document.body.classList.add("elite-cursor-on");
+        return () => document.body.classList.remove("elite-cursor-on");
+    }, []);
 
-        // Defer until after first paint of hero
-        const boot = window.setTimeout(() => {
-            setOn(true);
-            document.body.classList.add("elite-cursor-on");
-        }, 280);
+    useEffect(() => {
+        if (!on || !mounted) return;
 
-        let moveRaf = 0;
-        let hx = 0;
-        let hy = 0;
-        let hitT = 0;
+        let cancelled = false;
+        let hitRaf = 0;
+        let cleanupMove: (() => void) | undefined;
 
-        const onMove = (e: MouseEvent) => {
-            hx = e.clientX;
-            hy = e.clientY;
-            if (!moveRaf) {
-                moveRaf = requestAnimationFrame(() => {
-                    moveRaf = 0;
-                    x.set(hx);
-                    y.set(hy);
-                    const now = performance.now();
-                    if (now - hitT > 80) {
-                        hitT = now;
-                        const el = document.elementFromPoint(hx, hy) as HTMLElement | null;
-                        const interactive = !!el?.closest(
-                            "a, button, [role='button'], input, textarea, .calm-card, .elite-magnetic, .elite-surface"
-                        );
-                        if (interactive !== hoverRef.current) {
-                            hoverRef.current = interactive;
-                            setHovering(interactive);
-                        }
+        const boot = requestAnimationFrame(() => {
+            const tip = tipRef.current;
+            if (!tip || cancelled) return;
+
+            const place = () => {
+                const { x, y } = pos.current;
+                tip.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
+            };
+
+            // Position: every mousemove, zero delay
+            const onMove = (e: MouseEvent) => {
+                pos.current.x = e.clientX;
+                pos.current.y = e.clientY;
+                place();
+            };
+
+            // Hit-test: separate loop, throttled — never blocks place()
+            let lastHit = 0;
+            const hitLoop = (time: number) => {
+                if (time - lastHit >= 32) {
+                    lastHit = time;
+                    const { x, y } = pos.current;
+                    const el = document.elementFromPoint(x, y) as HTMLElement | null;
+                    const next = !!el?.closest(HIT);
+                    if (next !== hot.current) {
+                        hot.current = next;
+                        tip.classList.toggle("is-hot", next);
                     }
-                });
-            }
-        };
+                }
+                hitRaf = requestAnimationFrame(hitLoop);
+            };
 
-        window.addEventListener("mousemove", onMove, { passive: true });
-        window.addEventListener("mousedown", () => setClicking(true));
-        window.addEventListener("mouseup", () => setClicking(false));
+            const onDown = () => tip.classList.add("is-down");
+            const onUp = () => tip.classList.remove("is-down");
+
+            place();
+            window.addEventListener("mousemove", onMove, { passive: true });
+            window.addEventListener("mousedown", onDown);
+            window.addEventListener("mouseup", onUp);
+            hitRaf = requestAnimationFrame(hitLoop);
+
+            cleanupMove = () => {
+                window.removeEventListener("mousemove", onMove);
+                window.removeEventListener("mousedown", onDown);
+                window.removeEventListener("mouseup", onUp);
+                cancelAnimationFrame(hitRaf);
+            };
+        });
 
         return () => {
-            window.clearTimeout(boot);
-            cancelAnimationFrame(moveRaf);
-            document.body.classList.remove("elite-cursor-on");
-            window.removeEventListener("mousemove", onMove);
+            cancelled = true;
+            cancelAnimationFrame(boot);
+            cleanupMove?.();
         };
-    }, [x, y]);
+    }, [on, mounted]);
 
-    if (!on) return null;
+    if (!mounted || !on) return null;
 
-    const core = hovering ? 11 : 5;
-    const ring = hovering ? 46 : 28;
-
-    return (
+    return createPortal(
         <>
-            <motion.div
-                aria-hidden
-                className="pointer-events-none fixed z-[90] hidden md:block"
-                style={{ left: sx, top: sy, x: "-50%", y: "-50%" }}
-            >
-                <motion.div
-                    className="rounded-full bg-slate-900"
-                    animate={{
-                        width: clicking ? core * 0.7 : core,
-                        height: clicking ? core * 0.7 : core,
-                    }}
-                    transition={{ type: "spring", stiffness: 400, damping: 22 }}
-                />
-            </motion.div>
-            <motion.div
-                aria-hidden
-                className="pointer-events-none fixed z-[89] hidden md:block rounded-full border border-emerald-400/70"
-                style={{
-                    left: rx,
-                    top: ry,
-                    x: "-50%",
-                    y: "-50%",
-                    boxShadow: hovering ? "0 0 24px rgba(16,185,129,0.35)" : "0 0 0 transparent",
-                }}
-                animate={{
-                    width: clicking ? ring * 0.85 : ring,
-                    height: clicking ? ring * 0.85 : ring,
-                    opacity: hovering ? 1 : 0.5,
-                }}
-                transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            />
-        </>
+            <style dangerouslySetInnerHTML={{ __html: CURSOR_CSS }} />
+            <div className="elite-cursor" aria-hidden>
+                <div ref={tipRef} className="elite-cursor-tip">
+                    <span className="elite-cursor-frame" />
+                    <span className="elite-cursor-mark" />
+                </div>
+            </div>
+        </>,
+        document.body
     );
 }

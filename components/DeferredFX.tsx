@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import { useSiteReady } from "./IntroExperience";
 import SiteAtmosphere from "./SiteAtmosphere";
 import SmoothScroll from "./SmoothScroll";
-import CursorGlow from "./CursorGlow";
-import EliteCursor from "./EliteCursor";
 import ScrollTheatre from "./ScrollTheatre";
 
 /**
- * Smooth scroll + atmosphere after intro. Hero paints first.
+ * Smooth scroll + atmosphere after intro.
+ * CursorGlow removed — spring glow fought the 1:1 cursor and added lag.
  */
 export default function DeferredFX() {
     const ready = useSiteReady();
@@ -27,13 +26,7 @@ export default function DeferredFX() {
         <>
             <SmoothScroll />
             <ScrollTheatre />
-            {fx && (
-                <>
-                    <SiteAtmosphere />
-                    <CursorGlow />
-                    <EliteCursor />
-                </>
-            )}
+            {fx && <SiteAtmosphere />}
         </>
     );
 }
