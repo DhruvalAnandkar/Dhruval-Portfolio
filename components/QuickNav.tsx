@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronUp, Map } from "lucide-react";
 
+import { scrollToId } from "@/lib/lenisBridge";
+
 /** Right-rail jumps — hero + map without long scrolling */
 export default function QuickNav() {
     const [showHero, setShowHero] = useState(false);
@@ -38,9 +40,7 @@ export default function QuickNav() {
         return () => window.removeEventListener("scroll", onScroll);
     }, []);
 
-    const go = (id: string) => {
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
+    const go = (id: string) => scrollToId(id);
 
     const visible = showHero || showMap;
     if (!visible) return null;

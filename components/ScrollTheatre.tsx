@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
-/** Minimal scroll chrome — % marker only (streaks were costly during fast scroll). */
+/** Minimal scroll chrome — % marker synced directly to scroll (no spring desync). */
 export default function ScrollTheatre() {
     const pctRef = useRef<HTMLSpanElement>(null);
     const { scrollYProgress } = useScroll();
-    const smooth = useSpring(scrollYProgress, { stiffness: 140, damping: 32, mass: 0.2 });
-    const markerY = useTransform(smooth, [0, 1], ["8%", "88%"]);
+    const markerY = useTransform(scrollYProgress, [0, 1], ["8%", "88%"]);
 
     useEffect(() => {
         let raf = 0;

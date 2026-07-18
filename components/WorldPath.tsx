@@ -21,6 +21,7 @@ import {
     Compass,
 } from "lucide-react";
 import SectionFX from "./SectionFX";
+import { scrollToId } from "@/lib/lenisBridge";
 
 type Destination = {
     id: string;
@@ -71,9 +72,7 @@ function pathThrough(points: { x: number; y: number }[]) {
 }
 
 function travelTo(id: string) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    scrollToId(id);
 }
 
 export default function WorldPath() {

@@ -1270,11 +1270,92 @@ body {
   overscroll-behavior-y: none;
 }
 
-/* Elite cursor — hide system pointer on fine desktops when active */
+/* Elite cursor — hide system pointer when custom cursor is active */
 body.elite-cursor-on,
-body.elite-cursor-on a,
-body.elite-cursor-on button {
-  cursor: none;
+body.elite-cursor-on * {
+  cursor: none !important;
+}
+
+.elite-cursor {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .elite-cursor {
+    display: block;
+  }
+}
+
+.elite-cursor-tip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  will-change: transform;
+}
+
+/* Outer frame — only visible on clickable targets */
+.elite-cursor-frame {
+  position: absolute;
+  inset: 6px;
+  border: 1.5px solid transparent;
+  border-radius: 2px;
+  transform: rotate(45deg);
+  transition:
+    inset 100ms ease,
+    border-color 100ms ease,
+    background-color 100ms ease;
+}
+
+/* Core mark — always on */
+.elite-cursor-mark {
+  position: relative;
+  z-index: 1;
+  width: 8px;
+  height: 8px;
+  background: #0f172a;
+  border: 1.5px solid #10b981;
+  border-radius: 1px;
+  transform: rotate(45deg);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
+  transition:
+    width 100ms ease,
+    height 100ms ease,
+    background-color 100ms ease,
+    border-color 100ms ease,
+    box-shadow 100ms ease;
+}
+
+/* Clickable */
+.elite-cursor-tip.is-hot .elite-cursor-frame {
+  inset: 2px;
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.elite-cursor-tip.is-hot .elite-cursor-mark {
+  width: 9px;
+  height: 9px;
+  background: #10b981;
+  border-color: #ecfdf5;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.45);
+}
+
+/* Press */
+.elite-cursor-tip.is-down .elite-cursor-mark {
+  width: 6px;
+  height: 6px;
+}
+
+.elite-cursor-tip.is-down.is-hot .elite-cursor-frame {
+  inset: 5px;
 }
 
 /* CSS ambient blobs (replaced Framer particle storm) */
