@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
 
-/** Minimal scroll chrome — % marker synced directly to scroll (no spring desync). */
+/**
+ * Minimal scroll chrome — driven by native scroll only (no Framer lag layer).
+ */
 export default function ScrollTheatre() {
+    const wrapRef = useRef<HTMLDivElement>(null);
     const pctRef = useRef<HTMLSpanElement>(null);
-    const { scrollYProgress } = useScroll();
-    const markerY = useTransform(scrollYProgress, [0, 1], ["8%", "88%"]);
 
     useEffect(() => {
         let raf = 0;
@@ -17,8 +17,13 @@ export default function ScrollTheatre() {
         const paint = () => {
             ticking = false;
             const max = document.documentElement.scrollHeight - window.innerHeight;
-            const p = max > 0 ? window.scrollY / max : 0;
+            const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
             const pct = Math.round(p * 100);
+            const y = 8 + p * 80;
+
+            if (wrapRef.current) {
+                wrapRef.current.style.transform = `translate3d(0, ${y}vh, 0)`;
+            }
             if (pct !== lastPct && pctRef.current) {
                 lastPct = pct;
                 pctRef.current.textContent = `${pct}%`;
@@ -34,16 +39,19 @@ export default function ScrollTheatre() {
 
         paint();
         window.addEventListener("scroll", onScroll, { passive: true });
+        window.addEventListener("resize", onScroll, { passive: true });
         return () => {
             window.removeEventListener("scroll", onScroll);
+            window.removeEventListener("resize", onScroll);
             cancelAnimationFrame(raf);
         };
     }, []);
 
     return (
-        <motion.div
-            className="pointer-events-none fixed right-3 top-0 z-[45] hidden lg:flex flex-col items-center"
-            style={{ y: markerY }}
+        <div
+            ref={wrapRef}
+            className="pointer-events-none fixed right-3 top-0 z-[45] hidden lg:flex flex-col items-center will-change-transform"
+            style={{ transform: "translate3d(0, 8vh, 0)" }}
             aria-hidden
         >
             <div className="-translate-y-1/2 flex flex-col items-center gap-1">
@@ -55,6 +63,6 @@ export default function ScrollTheatre() {
                     0%
                 </span>
             </div>
-        </motion.div>
+        </div>
     );
 }

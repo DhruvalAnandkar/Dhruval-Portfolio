@@ -7,8 +7,9 @@ import SmoothScroll from "./SmoothScroll";
 import ScrollTheatre from "./ScrollTheatre";
 
 /**
- * Smooth scroll + atmosphere after intro.
- * CursorGlow removed — spring glow fought the 1:1 cursor and added lag.
+ * Atmosphere + hash-link helper after intro.
+ * Lenis wheel smoothing removed (caused scroll rubber-band lag).
+ * CursorGlow removed — spring glow fought the 1:1 cursor.
  */
 export default function DeferredFX() {
     const ready = useSiteReady();

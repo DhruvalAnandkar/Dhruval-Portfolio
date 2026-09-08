@@ -8,7 +8,7 @@ import SectionFX from "./SectionFX";
 const items = [
     {
         icon: Heart,
-        role: "President · Indian Catholic Youth",
+        role: "President · Indian Catholic Youth (Transfer Semester)",
         org: "Arizona State University",
         period: "2021 to 2022",
         description:

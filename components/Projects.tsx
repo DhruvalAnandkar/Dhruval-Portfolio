@@ -64,6 +64,26 @@ const flagshipProjects: ProjectCardProps[] = [
         isFlagship: true,
         githubUrl: "https://github.com/DhruvalAnandkar/AgriScience",
     },
+    {
+        title: "Vajra-MLOps",
+        role: "MLOps · Cloud-native pipeline",
+        category: "MLOps",
+        categoryIcon: <CloudCog size={11} />,
+        tagline: "Self-healing load-forecasting pipeline",
+        description:
+            "Event-driven distributed MLOps pipeline streaming high-throughput telemetry using FastAPI and Redpanda (Kafka) into TimescaleDB, with automated drift detection to manage microservice workloads.",
+        keyFeature:
+            "LangGraph SRE agent can train a challenger model and redeploy when accuracy slips.",
+        technicalImpact:
+            "Local Docker to managed cloud via DSN injection; statistical gates keep SRE decisions grounded.",
+        tags: ["FastAPI", "Redpanda", "TimescaleDB", "XGBoost", "LangGraph"],
+        accent: "emerald",
+        projectIcon: <CloudCog size={18} />,
+        isFlagship: true,
+        isLive: true,
+        githubUrl: "https://github.com/DhruvalAnandkar/Vajra-MLOps",
+        liveUrl: "https://vajra-ml-ops.vercel.app/",
+    },
 ];
 
 const moreProjects: ProjectCardProps[] = [
@@ -121,25 +141,6 @@ const moreProjects: ProjectCardProps[] = [
         badge: "Hackathon",
         githubUrl: "https://github.com/DhruvalAnandkar/CortexLab",
         devpostUrl: "https://devpost.com/software/cortexlab",
-    },
-    {
-        title: "Vajra-MLOps",
-        role: "MLOps · Cloud-native pipeline",
-        category: "MLOps",
-        categoryIcon: <CloudCog size={11} />,
-        tagline: "Self-healing load-forecasting pipeline",
-        description:
-            "Streams server telemetry via FastAPI and Redpanda, stores metrics in TimescaleDB, forecasts with XGBoost, and watches for drift with KS tests.",
-        keyFeature:
-            "LangGraph SRE agent can train a challenger model and redeploy when accuracy slips.",
-        technicalImpact:
-            "Local Docker to managed cloud via DSN injection; statistical gates keep SRE decisions grounded.",
-        tags: ["FastAPI", "Redpanda", "TimescaleDB", "XGBoost", "LangGraph"],
-        accent: "emerald",
-        projectIcon: <CloudCog size={18} />,
-        isLive: true,
-        githubUrl: "https://github.com/DhruvalAnandkar/Vajra-MLOps",
-        liveUrl: "https://vajra-ml-ops.vercel.app/",
     },
     {
         title: "ARIA",
