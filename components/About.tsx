@@ -65,8 +65,9 @@ export default function About() {
                         <FadeUp delay={0.18}>
                             <p className="text-slate-500 text-base sm:text-lg leading-relaxed mb-5">
                                 When I am not committing code, I am diving deep into advanced data structures, system design
-                                matrices, and tactical chess. I am actively looking for New Grad SWE roles where I can tackle
-                                complex, high-stakes infrastructure problems.
+                                matrices, and tactical chess. I am actively looking for New Grad Software, Backend, or Data
+                                Engineering roles where I can architect scalable data pipelines and tackle complex, high-stakes
+                                infrastructure problems.
                             </p>
                         </FadeUp>
                         <FadeUp delay={0.22}>

@@ -1,25 +1,21 @@
-import type Lenis from "lenis";
+/**
+ * In-page navigation helpers.
+ * Native window scroll only — no Lenis lerp (that caused rubber-band lag).
+ */
 
-/** Shared Lenis instance so anchors + wheel scroll stay in sync */
-let lenis: Lenis | null = null;
-
-export function setLenis(instance: Lenis | null) {
-    lenis = instance;
+export function setLenis(_instance: unknown) {
+    /* no-op: Lenis removed to stop scroll desync */
 }
 
 export function getLenis() {
-    return lenis;
+    return null;
 }
 
-/** Smooth scroll to an element id via Lenis when available */
+/** Scroll to an element id with a small nav offset */
 export function scrollToId(id: string, offset = -12) {
     const el = document.getElementById(id);
     if (!el) return;
 
-    if (lenis) {
-        lenis.scrollTo(el, { offset, duration: 1.15, easing: (t) => Math.min(1, 1.001 - 2 ** (-10 * t)) });
-        return;
-    }
-
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    const top = el.getBoundingClientRect().top + window.scrollY + offset;
+    window.scrollTo({ top: Math.max(0, top), behavior: "smooth" });
 }

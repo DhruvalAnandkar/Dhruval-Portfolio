@@ -26,7 +26,7 @@ const honors = [
     },
     {
         icon: Star,
-        title: "New American University Scholar",
+        title: "New American University Scholar (Transfer Semester)",
         body: "Merit scholarship from Arizona State recognising potential and leadership.",
         year: "2022",
     },
@@ -81,14 +81,8 @@ const certifications = [
     {
         icon: Container,
         title: "Containers & Kubernetes Essentials",
-        issuer: "IBM",
+        issuer: "CognitiveClass.ai",
         meta: "Jun 2026",
-    },
-    {
-        icon: Container,
-        title: "Containers, Kubernetes & OpenShift",
-        issuer: "Cognitive Class",
-        meta: "ID 5addfd3f…e33164 · Jun 2026",
     },
     {
         icon: Briefcase,

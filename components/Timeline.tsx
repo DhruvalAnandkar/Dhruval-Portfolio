@@ -51,7 +51,7 @@ const experiences = [
         isLeadership: false,
     },
     {
-        period: "Summer 2023",
+        period: "Dec 2022 – Jan 2023",
         role: "IT Intern",
         company: "Smith Structures",
         location: "Remote",
@@ -62,7 +62,7 @@ const experiences = [
         isLeadership: false,
     },
     {
-        period: "2022",
+        period: "Apr 2022 – May 2022",
         role: "IT Intern",
         company: "GSECL",
         location: "Gujarat, India",
