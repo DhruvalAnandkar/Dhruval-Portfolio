@@ -1,7 +1,8 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView, useScroll, useTransform, type Variants } from "framer-motion";
+import { motion, useInView, type Variants } from "framer-motion";
+import { isFastScrolling } from "@/lib/scrollBus";
 
 export const easings = {
     out: [0.22, 1, 0.36, 1] as const,
@@ -9,41 +10,40 @@ export const easings = {
 };
 
 /**
- * Scroll reveals MUST stay readable while scrolling.
- * Floor opacity at 0.55 — never blank out text on fast scroll.
- * Motion (y / slight scale) carries the "alive" feel.
+ * Near-fully visible before animate — a 1–2s page fling still reads every section.
+ * Tiny lift only; never blank or half-fade content while browsing.
  */
 export const fadeUp: Variants = {
-    hidden: { opacity: 0.55, y: 36 },
+    hidden: { opacity: 0.94, y: 10 },
     show: {
         opacity: 1,
         y: 0,
-        transition: { duration: 0.55, ease: easings.out },
+        transition: { duration: 0.22, ease: easings.out },
     },
 };
 
 export const fadeScale: Variants = {
-    hidden: { opacity: 0.6, scale: 0.96, y: 20 },
+    hidden: { opacity: 0.94, scale: 0.99, y: 8 },
     show: {
         opacity: 1,
         scale: 1,
         y: 0,
-        transition: { duration: 0.5, ease: easings.out },
+        transition: { duration: 0.2, ease: easings.out },
     },
 };
 
 export const clipReveal: Variants = {
-    hidden: { clipPath: "inset(0 0 12% 0)", opacity: 0.7, y: 16 },
+    hidden: { clipPath: "inset(0 0 4% 0)", opacity: 0.94, y: 6 },
     show: {
         clipPath: "inset(0 0 0% 0)",
         opacity: 1,
         y: 0,
-        transition: { duration: 0.65, ease: easings.out },
+        transition: { duration: 0.24, ease: easings.out },
     },
 };
 
-/** Fire before the element is fully in view so it "lands" as you arrive */
-const EARLY = "35% 0px -8% 0px";
+/** Fire early so content is “shown” as you arrive — even on fast flings */
+const EARLY = "45% 0px -5% 0px";
 
 export function Reveal({
     children,
@@ -59,7 +59,8 @@ export function Reveal({
     once?: boolean;
 }) {
     const ref = useRef(null);
-    const inView = useInView(ref, { once, margin: EARLY, amount: 0.2 });
+    const inView = useInView(ref, { once, margin: EARLY, amount: 0.12 });
+    const fast = typeof window !== "undefined" && isFastScrolling();
 
     return (
         <motion.div
@@ -67,8 +68,8 @@ export function Reveal({
             className={className}
             variants={variants}
             initial="hidden"
-            animate={inView ? "show" : "hidden"}
-            transition={{ delay }}
+            animate={inView || fast ? "show" : "hidden"}
+            transition={{ delay: fast ? 0 : delay, duration: fast ? 0.08 : undefined }}
         >
             {children}
         </motion.div>
@@ -79,7 +80,7 @@ export function Stagger({
     children,
     className,
     delay = 0,
-    stagger = 0.07,
+    stagger = 0.03,
 }: {
     children: React.ReactNode;
     className?: string;
@@ -87,18 +88,22 @@ export function Stagger({
     stagger?: number;
 }) {
     const ref = useRef(null);
-    const inView = useInView(ref, { once: true, margin: EARLY, amount: 0.15 });
+    const inView = useInView(ref, { once: true, margin: EARLY, amount: 0.1 });
+    const fast = typeof window !== "undefined" && isFastScrolling();
 
     return (
         <motion.div
             ref={ref}
             className={className}
             initial="hidden"
-            animate={inView ? "show" : "hidden"}
+            animate={inView || fast ? "show" : "hidden"}
             variants={{
                 hidden: {},
                 show: {
-                    transition: { staggerChildren: stagger, delayChildren: delay },
+                    transition: {
+                        staggerChildren: fast ? 0 : stagger,
+                        delayChildren: fast ? 0 : delay,
+                    },
                 },
             }}
         >
@@ -129,9 +134,9 @@ export function SectionBeam({ className }: { className?: string }) {
         <div ref={ref} className={`relative h-px w-full overflow-hidden ${className ?? ""}`}>
             <motion.div
                 className="absolute inset-y-0 left-0 bg-gradient-to-r from-transparent via-[#10b981] to-transparent"
-                initial={{ width: "0%", opacity: 0.4 }}
-                animate={inView ? { width: "100%", opacity: 1 } : { width: "12%", opacity: 0.4 }}
-                transition={{ duration: 0.85, ease: easings.out }}
+                initial={{ width: "35%", opacity: 0.7 }}
+                animate={inView ? { width: "100%", opacity: 1 } : { width: "35%", opacity: 0.7 }}
+                transition={{ duration: 0.28, ease: easings.out }}
             />
         </div>
     );
@@ -140,59 +145,24 @@ export function SectionBeam({ className }: { className?: string }) {
 export function ParallaxBlock({
     children,
     className,
-    offset = 28,
 }: {
     children: React.ReactNode;
     className?: string;
     offset?: number;
 }) {
-    const ref = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start end", "end start"],
-    });
-    const y = useTransform(scrollYProgress, [0, 1], [offset, -offset]);
-
-    return (
-        <motion.div ref={ref} style={{ y }} className={className}>
-            {children}
-        </motion.div>
-    );
+    return <div className={className}>{children}</div>;
 }
 
 export function SplitWords({
     text,
     className,
-    delay = 0,
 }: {
     text: string;
     className?: string;
     delay?: number;
 }) {
-    const ref = useRef(null);
-    const inView = useInView(ref, { once: true, margin: EARLY, amount: 0.3 });
-    const words = text.split(" ");
-
-    return (
-        <span ref={ref} className={`inline-flex flex-wrap gap-x-[0.28em] ${className ?? ""}`}>
-            {words.map((word, i) => (
-                <span key={`${word}-${i}`} className="overflow-hidden inline-block pb-[0.12em] -mb-[0.12em]">
-                    <motion.span
-                        className="inline-block"
-                        initial={{ y: "85%", opacity: 0.5 }}
-                        animate={inView ? { y: "0%", opacity: 1 } : { y: "40%", opacity: 0.65 }}
-                        transition={{
-                            duration: 0.5,
-                            delay: delay + i * 0.04,
-                            ease: easings.out,
-                        }}
-                    >
-                        {word}
-                    </motion.span>
-                </span>
-            ))}
-        </span>
-    );
+    /* Plain text — per-word motion lagged on fast scroll */
+    return <span className={className}>{text}</span>;
 }
 
 export function EliteHover({
@@ -222,15 +192,16 @@ export function SectionIntro({
     className?: string;
 }) {
     const ref = useRef(null);
-    const inView = useInView(ref, { once: true, margin: EARLY, amount: 0.35 });
+    const inView = useInView(ref, { once: true, margin: EARLY, amount: 0.2 });
+    const fast = typeof window !== "undefined" && isFastScrolling();
 
     return (
         <motion.div
             ref={ref}
             className={className}
-            initial={{ opacity: 0.55, y: 40 }}
-            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0.55, y: 28 }}
-            transition={{ duration: 0.6, ease: easings.out }}
+            initial={{ opacity: 0.94, y: 12 }}
+            animate={inView || fast ? { opacity: 1, y: 0 } : { opacity: 0.94, y: 8 }}
+            transition={{ duration: fast ? 0.08 : 0.22, ease: easings.out }}
         >
             {children}
         </motion.div>

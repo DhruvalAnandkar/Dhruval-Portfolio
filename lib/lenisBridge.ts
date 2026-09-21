@@ -1,10 +1,11 @@
 /**
  * In-page navigation helpers.
- * Native window scroll only — no Lenis lerp (that caused rubber-band lag).
+ * Native window scroll — programmatic jumps use smooth behavior.
+ * (Wheel Lenis lerp removed: it fought Framer + heavy FX and felt rubbery.)
  */
 
 export function setLenis(_instance: unknown) {
-    /* no-op: Lenis removed to stop scroll desync */
+    /* no-op: reserved if Lenis is reintroduced with Framer frame sync */
 }
 
 export function getLenis() {

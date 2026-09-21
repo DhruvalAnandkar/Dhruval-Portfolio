@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { motion, useInView, useScroll, useTransform } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { MapPin, Calendar, ShieldCheck } from "lucide-react";
 import SectionFX from "./SectionFX";
 
@@ -76,16 +76,10 @@ const experiences = [
 
 /* ── Scroll-driven growing line ── */
 function GrowingLine() {
-    const ref = useRef(null);
-    const { scrollYProgress } = useScroll({ target: ref, offset: ["start 85%", "end 25%"] });
-    const scaleY = useTransform(scrollYProgress, [0, 1], [0, 1]);
     return (
-        <div ref={ref} className="absolute left-[7px] top-0 bottom-0 w-px">
+        <div className="absolute left-[7px] top-0 bottom-0 w-px">
             <div className="absolute inset-0 bg-slate-100 rounded-full" />
-            <motion.div
-                className="absolute inset-x-0 top-0 origin-top rounded-full bg-[#10b981]"
-                style={{ scaleY, height: "100%" }}
-            />
+            <div className="timeline-grow absolute inset-x-0 top-0 h-full rounded-full bg-[#10b981]" />
         </div>
     );
 }
@@ -97,13 +91,13 @@ function EntryCard({ exp, index }: { exp: (typeof experiences)[0]; index: number
     return (
         <motion.div
             ref={ref}
-            initial={{ opacity: 0.55, x: -16, y: 24 }}
+            initial={{ opacity: 0.94, x: -16, y: 8 }}
             animate={
                 isInView
                     ? { opacity: 1, x: 0, y: 0 }
-                    : { opacity: 0.65, x: -8, y: 14 }
+                    : { opacity: 0.95, x: -8, y: 14 }
             }
-            transition={{ duration: 0.5, delay: Math.min(index * 0.05, 0.25), ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.2, delay: Math.min(index * 0.05, 0.25), ease: [0.22, 1, 0.36, 1] }}
             className="relative pl-12"
         >
             {/* Dot */}
@@ -170,13 +164,13 @@ export default function Timeline() {
             <div className="max-w-3xl mx-auto relative z-10">
                 <motion.div
                     ref={headerRef}
-                    initial={{ opacity: 0.55, y: 40 }}
+                    initial={{ opacity: 0.94, y: 12 }}
                     animate={
                         isInView
                             ? { opacity: 1, y: 0 }
-                            : { opacity: 0.55, y: 28 }
+                            : { opacity: 0.94, y: 8 }
                     }
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                     className="mb-10"
                 >
                     <p className="text-[#10b981] text-sm font-semibold tracking-widest uppercase mb-3">

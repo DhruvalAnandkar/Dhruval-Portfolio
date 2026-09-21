@@ -110,10 +110,10 @@ body {
    No border by default. Shadow-only depth.
    Add `glass-border` modifier when a subtle edge is needed. */
 .glass {
-  /* Solid-enough fill + light blur — heavy blur made fast-scroll frames blank */
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  /* Soft frosted glass — light blur stays clear without sticky scroll */
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(10px) saturate(1.15);
+  -webkit-backdrop-filter: blur(10px) saturate(1.15);
   box-shadow: var(--card-shadow);
 }
 
@@ -394,8 +394,8 @@ body {
     rgba(255, 255, 255, 0.4) 82deg,
     transparent 98deg
   );
-  opacity: 0.62;
-  mix-blend-mode: soft-light;
+  opacity: 0.5;
+  mix-blend-mode: normal;
   animation: anime-ray-breathe 9s ease-in-out infinite;
 }
 
@@ -415,11 +415,11 @@ body {
 .anime-cloud {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(1px);
-  background: radial-gradient(ellipse at 40% 40%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.15) 70%);
+  filter: blur(8px);
+  background: radial-gradient(ellipse at 40% 40%, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.28) 70%);
   box-shadow:
-    28px 8px 0 -6px rgba(255, 255, 255, 0.55),
-    -24px 12px 0 -8px rgba(255, 255, 255, 0.4);
+    28px 8px 18px -6px rgba(255, 255, 255, 0.45),
+    -24px 12px 16px -8px rgba(255, 255, 255, 0.32);
 }
 
 .anime-cloud-a {
@@ -633,8 +633,9 @@ body {
       rgba(254, 243, 199, 0.28) 48deg,
       transparent 70deg
     );
-  mix-blend-mode: soft-light;
-  opacity: 0.85;
+  /* soft-light over full viewport is expensive while scrolling */
+  mix-blend-mode: normal;
+  opacity: 0.55;
   animation: anime-ray-breathe 14s ease-in-out infinite;
 }
 
@@ -645,13 +646,14 @@ body {
 }
 
 .site-atm-clouds {
-  opacity: 0.85;
+  opacity: 0.95;
 }
 
 .site-atm-cloud {
   position: absolute;
   border-radius: 50%;
-  filter: blur(24px);
+  /* Soft real blur — clear frosted clouds */
+  filter: blur(18px);
   background: rgba(255, 255, 255, 0.72);
   will-change: transform;
 }
@@ -669,7 +671,7 @@ body {
   height: min(16vw, 140px);
   top: 42%;
   right: -10%;
-  background: rgba(224, 242, 254, 0.7);
+  background: rgba(186, 230, 253, 0.65);
   animation: anime-cloud-drift 52s linear infinite reverse;
 }
 
@@ -678,7 +680,7 @@ body {
   height: min(14vw, 120px);
   top: 68%;
   left: 28%;
-  background: rgba(236, 253, 245, 0.65);
+  background: rgba(167, 243, 208, 0.6);
   animation: anime-cloud-drift 58s linear infinite;
 }
 
@@ -721,7 +723,7 @@ body {
   );
 }
 
-/* Compositor scroll rise — low opacity floor so text never blanks */
+/* Compositor scroll rise — stay readable on fast flings */
 @supports (animation-timeline: view()) {
   .scroll-rise {
     animation: scroll-rise-view both linear;
@@ -731,8 +733,8 @@ body {
 
   @keyframes scroll-rise-view {
     from {
-      opacity: 0.55;
-      transform: translate3d(0, 28px, 0);
+      opacity: 0.94;
+      transform: translate3d(0, 10px, 0);
     }
     to {
       opacity: 1;
@@ -795,32 +797,77 @@ body {
 
 .section-atm-meadow .section-atm-wash {
   background:
-    radial-gradient(ellipse 50% 40% at 8% 90%, rgba(16, 185, 129, 0.12), transparent 65%),
-    radial-gradient(ellipse 40% 30% at 92% 85%, rgba(52, 211, 153, 0.1), transparent 60%);
+    radial-gradient(ellipse 70% 55% at 18% 12%, rgba(167, 243, 208, 0.42), transparent 62%),
+    radial-gradient(ellipse 50% 40% at 88% 78%, rgba(110, 231, 183, 0.22), transparent 58%);
 }
 
 .section-atm-sky .section-atm-wash {
   background:
-    radial-gradient(ellipse 55% 40% at 88% 8%, rgba(186, 230, 253, 0.22), transparent 60%),
-    radial-gradient(ellipse 40% 30% at 10% 90%, rgba(167, 243, 208, 0.12), transparent 55%);
+    radial-gradient(ellipse 65% 50% at 88% 8%, rgba(125, 211, 252, 0.38), transparent 60%),
+    radial-gradient(ellipse 45% 35% at 10% 90%, rgba(186, 230, 253, 0.28), transparent 55%);
 }
 
 .section-atm-mist .section-atm-wash {
   background:
-    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(236, 253, 245, 0.5), transparent 60%),
-    radial-gradient(ellipse 40% 30% at 15% 100%, rgba(224, 242, 254, 0.28), transparent 55%);
+    radial-gradient(ellipse 75% 55% at 50% 0%, rgba(236, 253, 245, 0.55), transparent 58%),
+    radial-gradient(ellipse 45% 35% at 12% 100%, rgba(207, 250, 254, 0.32), transparent 55%);
 }
 
 .section-atm-bloom .section-atm-wash {
   background:
-    radial-gradient(ellipse 45% 35% at 90% 12%, rgba(254, 205, 211, 0.14), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 8% 90%, rgba(167, 243, 208, 0.14), transparent 55%);
+    radial-gradient(ellipse 50% 40% at 90% 10%, rgba(251, 207, 232, 0.28), transparent 58%),
+    radial-gradient(ellipse 55% 45% at 8% 88%, rgba(167, 243, 208, 0.22), transparent 55%);
 }
 
 .section-atm-map .section-atm-wash {
   background:
-    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(167, 243, 208, 0.18), transparent 55%),
-    radial-gradient(ellipse 40% 30% at 85% 80%, rgba(16, 185, 129, 0.1), transparent 55%);
+    radial-gradient(ellipse 65% 45% at 50% 0%, rgba(110, 231, 183, 0.32), transparent 55%),
+    radial-gradient(ellipse 45% 35% at 85% 80%, rgba(16, 185, 129, 0.18), transparent 55%);
+}
+
+.section-atm-glow {
+  position: absolute;
+  inset: 8% 5% auto;
+  height: 42%;
+  width: 55%;
+  border-radius: 50%;
+  filter: blur(28px);
+  opacity: 0.55;
+  pointer-events: none;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.section-atm-meadow .section-atm-glow {
+  background: rgba(110, 231, 183, 0.45);
+  left: 8%;
+  width: 55%;
+}
+
+.section-atm-sky .section-atm-glow {
+  background: rgba(125, 211, 252, 0.48);
+  left: auto;
+  right: 6%;
+  width: 52%;
+}
+
+.section-atm-mist .section-atm-glow {
+  background: rgba(226, 232, 240, 0.55);
+  width: 70%;
+  left: 15%;
+  filter: blur(32px);
+}
+
+.section-atm-bloom .section-atm-glow {
+  background: rgba(251, 207, 232, 0.4);
+  right: 8%;
+  left: auto;
+  width: 48%;
+}
+
+.section-atm-map .section-atm-glow {
+  background: rgba(52, 211, 153, 0.4);
+  width: 60%;
+  left: 20%;
 }
 
 .section-atm-rays {
@@ -836,16 +883,16 @@ body {
       transparent 78deg
     );
   mix-blend-mode: soft-light;
-  opacity: 0.78;
+  opacity: 0.65;
   animation: anime-ray-breathe 12s ease-in-out infinite;
 }
 
 .section-atm-cloud {
   position: absolute;
   border-radius: 50%;
-  filter: blur(22px);
-  background: rgba(255, 255, 255, 0.5);
-  opacity: 0.55;
+  filter: blur(16px);
+  background: rgba(255, 255, 255, 0.58);
+  opacity: 0.75;
   will-change: transform;
 }
 
@@ -862,8 +909,22 @@ body {
   height: min(12vw, 96px);
   top: 55%;
   right: -8%;
-  background: rgba(224, 242, 254, 0.42);
+  background: rgba(186, 230, 253, 0.5);
   animation: anime-cloud-drift 50s linear infinite reverse;
+}
+
+.section-atm-meadow .section-atm-cloud-b {
+  background: rgba(167, 243, 208, 0.55);
+}
+
+.section-atm-bloom .section-atm-cloud-a {
+  background: rgba(252, 231, 243, 0.6);
+}
+
+.section-atm-mist .section-atm-cloud-a,
+.section-atm-mist .section-atm-cloud-b {
+  filter: blur(20px);
+  opacity: 0.85;
 }
 
 .section-atm-motes {
@@ -883,8 +944,21 @@ body {
   position: absolute;
   inset-x: 0;
   bottom: 0;
-  height: 32%;
-  background: linear-gradient(to top, rgba(167, 243, 208, 0.12), transparent 70%);
+  height: 38%;
+  background: linear-gradient(to top, rgba(167, 243, 208, 0.18), transparent 72%);
+}
+
+.section-atm-sky .section-atm-haze {
+  background: linear-gradient(to top, rgba(186, 230, 253, 0.2), transparent 72%);
+}
+
+.section-atm-bloom .section-atm-haze {
+  background: linear-gradient(to top, rgba(251, 207, 232, 0.14), transparent 72%);
+}
+
+.section-atm-mist .section-atm-haze {
+  background: linear-gradient(to top, rgba(241, 245, 249, 0.35), transparent 72%);
+  height: 44%;
 }
 
 @keyframes mote-drift {
@@ -976,7 +1050,8 @@ body {
 .side-rail-orb {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(18px);
+  filter: blur(14px);
+  background: rgba(167, 243, 208, 0.5);
   opacity: 0.55;
   animation: side-rail-orb-drift 16s ease-in-out infinite alternate;
 }
@@ -1097,7 +1172,6 @@ body {
 
 .side-rail-compact .side-rail-orb {
   opacity: 0.35;
-  filter: blur(22px);
 }
 
 /* Traveling energy on the rails — transform-only (no layout thrash) */
@@ -1238,6 +1312,7 @@ body {
   .site-atm-spark,
   .section-atm-rays,
   .section-atm-cloud,
+  .section-atm-glow,
   .section-atm-motes,
   .side-rail-veil,
   .side-rail-orb,
@@ -1261,104 +1336,64 @@ body {
   }
 }
 
+/* ── Growing timeline line (CSS scroll-driven — stays synced to scroll) ── */
+.timeline-grow {
+  transform-origin: top;
+  transform: scaleY(1);
+}
+
+@supports (animation-timeline: view()) {
+  .timeline-grow {
+    transform: scaleY(0);
+    animation: timeline-grow-view both linear;
+    animation-timeline: view();
+    animation-range: entry 15% cover 70%;
+  }
+
+  @keyframes timeline-grow-view {
+    from {
+      transform: scaleY(0);
+    }
+    to {
+      transform: scaleY(1);
+    }
+  }
+}
+
+/* Below-fold sections skip offscreen paint — keep About visible so IO stays synced */
+main > section:not(#hero):not(#world):not(#about) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 720px;
+}
+
+#about {
+  content-visibility: visible;
+}
+
 body {
   overscroll-behavior-y: none;
 }
 
-/* Elite cursor — hide system pointer when custom cursor is active */
+.hero-spotlight {
+  background: radial-gradient(
+    560px circle at var(--hero-spot-x, 50%) var(--hero-spot-y, 40%),
+    rgba(16, 185, 129, 0.12),
+    transparent 55%
+  );
+}
+
 body.elite-cursor-on,
 body.elite-cursor-on * {
   cursor: none !important;
-}
-
-.elite-cursor {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  pointer-events: none;
-  display: none;
-}
-
-@media (min-width: 768px) {
-  .elite-cursor {
-    display: block;
-  }
-}
-
-.elite-cursor-tip {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 28px;
-  height: 28px;
-  display: grid;
-  place-items: center;
-  will-change: transform;
-}
-
-/* Outer frame — only visible on clickable targets */
-.elite-cursor-frame {
-  position: absolute;
-  inset: 6px;
-  border: 1.5px solid transparent;
-  border-radius: 2px;
-  transform: rotate(45deg);
-  transition:
-    inset 100ms ease,
-    border-color 100ms ease,
-    background-color 100ms ease;
-}
-
-/* Core mark — always on */
-.elite-cursor-mark {
-  position: relative;
-  z-index: 1;
-  width: 8px;
-  height: 8px;
-  background: #0f172a;
-  border: 1.5px solid #10b981;
-  border-radius: 1px;
-  transform: rotate(45deg);
-  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
-  transition:
-    width 100ms ease,
-    height 100ms ease,
-    background-color 100ms ease,
-    border-color 100ms ease,
-    box-shadow 100ms ease;
-}
-
-/* Clickable */
-.elite-cursor-tip.is-hot .elite-cursor-frame {
-  inset: 2px;
-  border-color: #10b981;
-  background: rgba(16, 185, 129, 0.08);
-}
-
-.elite-cursor-tip.is-hot .elite-cursor-mark {
-  width: 9px;
-  height: 9px;
-  background: #10b981;
-  border-color: #ecfdf5;
-  box-shadow: 0 0 10px rgba(16, 185, 129, 0.45);
-}
-
-/* Press */
-.elite-cursor-tip.is-down .elite-cursor-mark {
-  width: 6px;
-  height: 6px;
-}
-
-.elite-cursor-tip.is-down.is-hot .elite-cursor-frame {
-  inset: 5px;
 }
 
 /* CSS ambient blobs (replaced Framer particle storm) */
 .ambient-blob {
   position: absolute;
   border-radius: 9999px;
-  filter: blur(40px);
-  opacity: 0.45;
+  filter: blur(28px);
+  background: rgba(167, 243, 208, 0.42);
+  opacity: 0.55;
   will-change: transform;
 }
 
@@ -1367,7 +1402,7 @@ body.elite-cursor-on * {
   left: 8%;
   width: min(28vw, 280px);
   height: min(28vw, 280px);
-  background: rgba(167, 243, 208, 0.35);
+  background: rgba(167, 243, 208, 0.42);
   animation: ambient-drift 22s ease-in-out infinite alternate;
 }
 
@@ -1376,7 +1411,7 @@ body.elite-cursor-on * {
   right: 10%;
   width: min(24vw, 240px);
   height: min(24vw, 240px);
-  background: rgba(186, 230, 253, 0.3);
+  background: rgba(125, 211, 252, 0.38);
   animation: ambient-drift 28s ease-in-out infinite alternate-reverse;
 }
 
@@ -1385,7 +1420,7 @@ body.elite-cursor-on * {
   left: 40%;
   width: min(20vw, 200px);
   height: min(20vw, 200px);
-  background: rgba(16, 185, 129, 0.16);
+  background: rgba(253, 224, 71, 0.22);
   animation: ambient-drift 24s ease-in-out infinite alternate;
   animation-delay: -6s;
 }

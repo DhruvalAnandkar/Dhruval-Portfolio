@@ -50,10 +50,10 @@ function ParallaxCard({
     const rawY = useMotionValue(0);
     const scaleVal = useMotionValue(1);
 
-    const springConfig = { stiffness: 200, damping: 22, mass: 0.6 };
-    const rotateX = useSpring(useTransform(rawY, [-0.5, 0.5], [4, -4]), springConfig);
-    const rotateY = useSpring(useTransform(rawX, [-0.5, 0.5], [-4, 4]), springConfig);
-    const scale = useSpring(scaleVal, { stiffness: 250, damping: 22 });
+    const springConfig = { stiffness: 380, damping: 28, mass: 0.35 };
+    const rotateX = useSpring(useTransform(rawY, [-0.5, 0.5], [3, -3]), springConfig);
+    const rotateY = useSpring(useTransform(rawX, [-0.5, 0.5], [-3, 3]), springConfig);
+    const scale = useSpring(scaleVal, { stiffness: 400, damping: 30, mass: 0.35 });
 
     const [glowing, setGlowing] = useState(false);
 

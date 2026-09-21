@@ -4,9 +4,6 @@ import { useState, useEffect, useRef, memo } from "react";
 import {
     motion,
     useMotionValue,
-    useSpring,
-    useTransform,
-    useScroll,
 } from "framer-motion";
 import { ArrowRight, Download } from "lucide-react";
 import StoryMarquee from "./StoryMarquee";
@@ -28,8 +25,6 @@ function MagneticButton({
     const ref = useRef<HTMLAnchorElement>(null);
     const x = useMotionValue(0);
     const y = useMotionValue(0);
-    const springX = useSpring(x, { stiffness: 280, damping: 22 });
-    const springY = useSpring(y, { stiffness: 280, damping: 22 });
 
     const handleMouseMove = (e: React.MouseEvent) => {
         const rect = ref.current?.getBoundingClientRect();
@@ -37,8 +32,8 @@ function MagneticButton({
         const dx = e.clientX - (rect.left + rect.width / 2);
         const dy = e.clientY - (rect.top + rect.height / 2);
         if (Math.hypot(dx, dy) < 80) {
-            x.set(dx * 0.42);
-            y.set(dy * 0.42);
+            x.set(dx * 0.28);
+            y.set(dy * 0.28);
         }
     };
 
@@ -52,7 +47,7 @@ function MagneticButton({
                 x.set(0);
                 y.set(0);
             }}
-            style={{ x: springX, y: springY }}
+            style={{ x, y }}
             whileTap={{ scale: 0.97 }}
             className={`
         elite-magnetic inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl text-sm font-bold
@@ -182,56 +177,43 @@ export default function Hero() {
     const siteReady = useSiteReady();
     const sectionRef = useRef<HTMLElement>(null);
     const skyRef = useRef<HTMLDivElement>(null);
-    const mx = useMotionValue(0);
-    const my = useMotionValue(0);
-    const smx = useSpring(mx, { stiffness: 50, damping: 20 });
-    const smy = useSpring(my, { stiffness: 50, damping: 20 });
 
-    const spotX = useTransform(smx, [-1, 1], ["20%", "80%"]);
-    const spotY = useTransform(smy, [-1, 1], ["20%", "70%"]);
-    const spotlightBg = useTransform([spotX, spotY], ([x, y]) =>
-        `radial-gradient(560px circle at ${x} ${y}, rgba(16,185,129,0.12), transparent 55%)`
-    );
-
-    /* Original hero scroll exit — keep this feel intact */
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ["start start", "end start"],
-    });
-    /* Never go fully invisible — fast scroll must still show hero text */
-    const heroOpacity = useTransform(scrollYProgress, [0, 0.85], [1, 0.55]);
-    const heroY = useTransform(scrollYProgress, [0, 1], [0, 80]);
-    const heroScale = useTransform(scrollYProgress, [0, 1], [1, 0.96]);
+    /* No scroll-linked y/opacity — JS transforms lag behind the wheel (sticky catch-up) */
 
     useEffect(() => {
-        const onMove = (e: MouseEvent) => {
+        const onMove = (e: PointerEvent) => {
             const nx = (e.clientX / window.innerWidth) * 2 - 1;
             const ny = (e.clientY / window.innerHeight) * 2 - 1;
-            mx.set(nx);
-            my.set(ny);
             const sky = skyRef.current;
             if (sky) {
                 sky.style.setProperty("--mx", nx.toFixed(3));
                 sky.style.setProperty("--my", ny.toFixed(3));
             }
+            sectionRef.current?.style.setProperty("--hero-spot-x", `${(20 + (nx + 1) * 30).toFixed(1)}%`);
+            sectionRef.current?.style.setProperty("--hero-spot-y", `${(20 + (ny + 1) * 25).toFixed(1)}%`);
         };
-        window.addEventListener("mousemove", onMove, { passive: true });
-        return () => window.removeEventListener("mousemove", onMove);
-    }, [mx, my]);
+        window.addEventListener("pointermove", onMove, { passive: true });
+        return () => window.removeEventListener("pointermove", onMove);
+    }, []);
 
     return (
         <section
             ref={sectionRef}
             id="hero"
             className="relative min-h-[94vh] flex flex-col items-center justify-center px-6 pt-28 pb-16 text-center overflow-hidden"
+            style={
+                {
+                    ["--hero-spot-x" as string]: "50%",
+                    ["--hero-spot-y" as string]: "40%",
+                } as React.CSSProperties
+            }
         >
             <NatureAtmosphere ref={skyRef} />
             <SideMarginLife tone="meadow" />
 
-            <motion.div
+            <div
                 aria-hidden
-                className="pointer-events-none absolute inset-0 z-0"
-                style={{ background: spotlightBg }}
+                className="pointer-events-none absolute inset-0 z-0 hero-spotlight"
             />
             {/* Soft handoff into the map — kills the hard chop */}
             <div
@@ -239,10 +221,7 @@ export default function Hero() {
                 className="pointer-events-none absolute inset-x-0 bottom-0 h-40 z-[2] bg-gradient-to-b from-transparent via-emerald-50/40 to-emerald-100/70"
             />
 
-            <motion.div
-                style={{ opacity: heroOpacity, y: heroY, scale: heroScale }}
-                className="relative z-10 flex flex-col items-center w-full max-w-3xl lg:max-w-4xl mx-auto"
-            >
+            <div className="relative z-10 flex flex-col items-center w-full max-w-3xl lg:max-w-4xl mx-auto">
                 <motion.div
                     initial={{ opacity: 0, y: 16, scale: 0.94 }}
                     animate={siteReady ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 16, scale: 0.94 }}
@@ -336,7 +315,7 @@ export default function Hero() {
                         </motion.div>
                     ))}
                 </motion.div>
-            </motion.div>
+            </div>
 
             <motion.div
                 initial={{ opacity: 0 }}

@@ -126,13 +126,13 @@ export default function SocialProof() {
             <div className="max-w-6xl mx-auto relative z-10">
                 <motion.div
                     ref={ref}
-                    initial={{ opacity: 0.55, y: 40 }}
+                    initial={{ opacity: 0.94, y: 12 }}
                     animate={
                         isInView
                             ? { opacity: 1, y: 0 }
-                            : { opacity: 0.55, y: 28 }
+                            : { opacity: 0.94, y: 8 }
                     }
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                     className="mb-8"
                 >
                     <p className="text-[#10b981] text-sm font-semibold tracking-widest uppercase mb-3">
@@ -152,11 +152,11 @@ export default function SocialProof() {
                         return (
                             <motion.div
                                 key={honor.title}
-                                initial={{ opacity: 0.55, y: 28, scale: 0.96 }}
+                                initial={{ opacity: 0.94, y: 8, scale: 0.96 }}
                                 animate={
                                     isInView
                                         ? { opacity: 1, y: 0, scale: 1 }
-                                        : { opacity: 0.6, y: 18, scale: 0.97 }
+                                        : { opacity: 0.95, y: 18, scale: 0.97 }
                                 }
                                 transition={{ duration: 0.45, delay: Math.min(i * 0.04, 0.24), ease: [0.22, 1, 0.36, 1] }}
                                 whileHover={{ y: -8, scale: 1.025 }}
@@ -179,9 +179,9 @@ export default function SocialProof() {
                 </div>
 
                 <motion.div
-                    initial={{ opacity: 0.55, y: 16 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.55, y: 12 }}
-                    transition={{ duration: 0.5, delay: 0.06 }}
+                    initial={{ opacity: 0.94, y: 16 }}
+                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.94, y: 12 }}
+                    transition={{ duration: 0.2, delay: 0.06 }}
                     className="mb-5 mt-2 flex flex-wrap items-end justify-between gap-3"
                 >
                     <div>
@@ -212,8 +212,8 @@ export default function SocialProof() {
                             href={hack.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            initial={{ opacity: 0.55, y: 20 }}
-                            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.6, y: 14 }}
+                            initial={{ opacity: 0.94, y: 8 }}
+                            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.95, y: 14 }}
                             transition={{ duration: 0.45, delay: 0.08 + i * 0.05 }}
                             whileHover={{ y: -6, scale: 1.02 }}
                             className="glass calm-card elite-surface rounded-2xl p-4 shadow-md hover:shadow-xl transition-shadow block"

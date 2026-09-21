@@ -402,25 +402,25 @@ export default function Projects() {
             <div className="max-w-6xl mx-auto relative z-10">
                 <div ref={headerRef}>
                     <motion.p
-                        initial={{ opacity: 0.55, y: 28 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.55, y: 20 }}
+                        initial={{ opacity: 0.94, y: 8 }}
+                        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.94, y: 8 }}
                         transition={{ duration: 0.5 }}
                         className="text-[#10b981] text-sm font-semibold tracking-widest uppercase mb-3"
                     >
                         Builds
                     </motion.p>
                     <motion.h2
-                        initial={{ opacity: 0.55, y: 40 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.55, y: 28 }}
-                        transition={{ duration: 0.55, delay: 0.04 }}
+                        initial={{ opacity: 0.94, y: 12 }}
+                        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.94, y: 8 }}
+                        transition={{ duration: 0.22, delay: 0.04 }}
                         className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 mb-3"
                     >
                         Work that moved the needle
                     </motion.h2>
                     <motion.p
-                        initial={{ opacity: 0.55, y: 24 }}
-                        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.6, y: 16 }}
-                        transition={{ duration: 0.5, delay: 0.08 }}
+                        initial={{ opacity: 0.94, y: 8 }}
+                        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0.95, y: 16 }}
+                        transition={{ duration: 0.2, delay: 0.08 }}
                         className="text-slate-500 text-base sm:text-lg max-w-lg mb-10"
                     >
                         Flagship systems up top. Open anything else when you want the deep dive.
@@ -439,13 +439,13 @@ export default function Projects() {
                     {flagshipProjects.map((project, i) => (
                         <motion.div
                             key={project.title}
-                            initial={{ opacity: 0.55, y: 40, scale: 0.96 }}
+                            initial={{ opacity: 0.94, y: 12, scale: 0.96 }}
                             animate={
                                 isInView
                                     ? { opacity: 1, y: 0, scale: 1 }
-                                    : { opacity: 0.6, y: 28, scale: 0.97 }
+                                    : { opacity: 0.95, y: 8, scale: 0.97 }
                             }
-                            transition={{ duration: 0.55, delay: 0.1 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                            transition={{ duration: 0.22, delay: 0.1 + i * 0.08, ease: [0.22, 1, 0.36, 1] }}
                             className="h-full"
                         >
                             <ProjectCard {...project} />

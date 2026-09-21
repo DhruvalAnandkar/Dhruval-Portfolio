@@ -12,32 +12,48 @@ export default function QuickNav() {
     const [showMap, setShowMap] = useState(false);
 
     useEffect(() => {
-        const onScroll = () => {
+        let raf = 0;
+        let ticking = false;
+        const heroEl = () => document.getElementById("hero");
+        const worldEl = () => document.getElementById("world");
+
+        const update = () => {
+            ticking = false;
             const y = window.scrollY;
-            const hero = document.getElementById("hero");
-            const world = document.getElementById("world");
+            const hero = heroEl();
+            const world = worldEl();
 
-            const heroInView = hero
-                ? (() => {
-                      const r = hero.getBoundingClientRect();
-                      return r.top > -r.height * 0.35 && r.bottom > window.innerHeight * 0.35;
-                  })()
-                : y < 120;
+            let heroInView = y < 120;
+            if (hero) {
+                const r = hero.getBoundingClientRect();
+                heroInView = r.top > -r.height * 0.35 && r.bottom > window.innerHeight * 0.35;
+            }
 
-            const mapInView = world
-                ? (() => {
-                      const r = world.getBoundingClientRect();
-                      return r.top < window.innerHeight * 0.55 && r.bottom > window.innerHeight * 0.35;
-                  })()
-                : false;
+            let mapInView = false;
+            if (world) {
+                const r = world.getBoundingClientRect();
+                mapInView = r.top < window.innerHeight * 0.55 && r.bottom > window.innerHeight * 0.35;
+            }
 
-            setShowHero(y > 220 && !heroInView);
-            setShowMap(y > 280 && !mapInView);
+            const nextHero = y > 220 && !heroInView;
+            const nextMap = y > 280 && !mapInView;
+            setShowHero((prev) => (prev === nextHero ? prev : nextHero));
+            setShowMap((prev) => (prev === nextMap ? prev : nextMap));
         };
 
-        onScroll();
+        const onScroll = () => {
+            if (!ticking) {
+                ticking = true;
+                raf = requestAnimationFrame(update);
+            }
+        };
+
+        update();
         window.addEventListener("scroll", onScroll, { passive: true });
-        return () => window.removeEventListener("scroll", onScroll);
+        return () => {
+            window.removeEventListener("scroll", onScroll);
+            cancelAnimationFrame(raf);
+        };
     }, []);
 
     const go = (id: string) => scrollToId(id);
@@ -58,7 +74,7 @@ export default function QuickNav() {
                         exit={{ opacity: 0, x: 12, scale: 0.94 }}
                         whileHover={{ scale: 1.04, y: -1 }}
                         whileTap={{ scale: 0.96 }}
-                        className="flex items-center gap-2 rounded-full border border-emerald-100 bg-white/95 px-3.5 py-2.5 text-xs font-bold text-slate-800 shadow-xl shadow-emerald-900/10 backdrop-blur-md hover:border-[#10b981] hover:text-[#059669]"
+                        className="flex items-center gap-2 rounded-full border border-emerald-100 bg-white/97 px-3.5 py-2.5 text-xs font-bold text-slate-800 shadow-xl shadow-emerald-900/10 hover:border-[#10b981] hover:text-[#059669]"
                         aria-label="Back to top"
                     >
                         <ChevronUp size={14} className="text-[#10b981]" />
@@ -77,7 +93,7 @@ export default function QuickNav() {
                         exit={{ opacity: 0, x: 12, scale: 0.94 }}
                         whileHover={{ scale: 1.04, y: -1 }}
                         whileTap={{ scale: 0.96 }}
-                        className="flex items-center gap-2 rounded-full border border-emerald-100 bg-white/95 px-3.5 py-2.5 text-xs font-bold text-slate-800 shadow-xl shadow-emerald-900/10 backdrop-blur-md hover:border-[#10b981] hover:text-[#059669]"
+                        className="flex items-center gap-2 rounded-full border border-emerald-100 bg-white/97 px-3.5 py-2.5 text-xs font-bold text-slate-800 shadow-xl shadow-emerald-900/10 hover:border-[#10b981] hover:text-[#059669]"
                         aria-label="Back to map"
                     >
                         <Map size={14} className="text-[#10b981]" />

@@ -6,7 +6,6 @@ import {
     useMotionValue,
     useSpring,
     useTransform,
-    useScroll,
     useInView,
 } from "framer-motion";
 import {
@@ -80,8 +79,8 @@ export default function WorldPath() {
     const headerInView = useInView(ref, { once: true, margin: "30% 0px", amount: 0.2 });
     const mx = useMotionValue(0);
     const my = useMotionValue(0);
-    const sx = useSpring(mx, { stiffness: 40, damping: 18 });
-    const sy = useSpring(my, { stiffness: 40, damping: 18 });
+    const sx = useSpring(mx, { stiffness: 120, damping: 22, mass: 0.35 });
+    const sy = useSpring(my, { stiffness: 120, damping: 22, mass: 0.35 });
 
     const farX = useTransform(sx, [-1, 1], [18, -18]);
     const farY = useTransform(sy, [-1, 1], [12, -12]);
@@ -90,12 +89,7 @@ export default function WorldPath() {
     const nearX = useTransform(sx, [-1, 1], [-6, 6]);
     const nearY = useTransform(sy, [-1, 1], [-5, 5]);
 
-    const { scrollYProgress } = useScroll({
-        target: ref,
-        offset: ["start end", "end start"],
-    });
-    const worldY = useTransform(scrollYProgress, [0, 1], [28, -28]);
-
+    /* Mouse parallax only — scroll-linked y fought the wheel on this large tree */
     const pathD = useMemo(
         () => pathThrough([START, ...destinations.map((d) => ({ x: d.x, y: d.y }))]),
         []
@@ -143,34 +137,34 @@ export default function WorldPath() {
                             height: 5 + (i % 2) * 2,
                             top: `${22 + i * 18}%`,
                             left: `${18 + i * 22}%`,
-                            opacity: 0.55,
+                            opacity: 0.94,
                         }}
                     />
                 ))}
             </motion.div>
 
-            <motion.div style={{ y: worldY }} className="relative z-10 mx-auto max-w-6xl">
+            <div className="relative z-10 mx-auto max-w-6xl">
                 <div className="mb-8 sm:mb-10 text-center max-w-2xl mx-auto">
                     <motion.p
-                        initial={{ opacity: 0.55, y: 24 }}
-                        animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0.55, y: 16 }}
-                        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                        initial={{ opacity: 0.94, y: 8 }}
+                        animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0.94, y: 16 }}
+                        transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                         className="inline-flex items-center gap-2 text-[#047857] text-xs font-bold tracking-[0.28em] uppercase mb-3"
                     >
                         <Compass size={13} /> Expedition Map
                     </motion.p>
                     <motion.h2
-                        initial={{ opacity: 0.55, y: 36 }}
-                        animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0.55, y: 24 }}
+                        initial={{ opacity: 0.94, y: 10 }}
+                        animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0.94, y: 8 }}
                         transition={{ duration: 0.65, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
                         className="text-3xl sm:text-5xl font-extrabold text-slate-900 leading-tight mb-3"
                     >
                         Chart the expedition
                     </motion.h2>
                     <motion.p
-                        initial={{ opacity: 0.55, y: 20 }}
-                        animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0.6, y: 12 }}
-                        transition={{ duration: 0.55, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                        initial={{ opacity: 0.94, y: 8 }}
+                        animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0.95, y: 12 }}
+                        transition={{ duration: 0.22, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                         className="text-slate-600 text-sm sm:text-base"
                     >
                         Seven stops. One path. Click any island to jump there.
@@ -216,7 +210,7 @@ export default function WorldPath() {
                     <motion.div
                         className="absolute z-40"
                         style={{ left: `${START.x}%`, top: `${START.y}%` }}
-                        initial={{ scale: 0.7, opacity: 0.55 }}
+                        initial={{ scale: 0.7, opacity: 0.94 }}
                         animate={headerInView ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0.75 }}
                         transition={{ delay: 0.05, type: "spring", stiffness: 260, damping: 16 }}
                     >
@@ -235,7 +229,7 @@ export default function WorldPath() {
                                 onClick={() => travelTo(d.id)}
                                 className="absolute z-30 group"
                                 style={{ left: `${d.x}%`, top: `${d.y}%` }}
-                                initial={{ opacity: 0.55, scale: 0.86 }}
+                                initial={{ opacity: 0.94, scale: 0.86 }}
                                 animate={headerInView ? { opacity: 1, scale: 1 } : { opacity: 0.7, scale: 0.94 }}
                                 transition={{
                                     delay: 0.1 + i * 0.06,
@@ -286,7 +280,7 @@ export default function WorldPath() {
                 <p className="mt-5 text-center text-xs text-slate-400">
                     Hover to lift · click to travel
                 </p>
-            </motion.div>
+            </div>
         </section>
     );
 }

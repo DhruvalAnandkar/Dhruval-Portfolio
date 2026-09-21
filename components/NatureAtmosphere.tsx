@@ -25,7 +25,7 @@ const NatureAtmosphere = forwardRef<HTMLDivElement>(function NatureAtmosphere(_,
     }, []);
 
     const petals = useMemo(() => {
-        const n = tier === "off" ? 0 : tier === "lite" ? 10 : 16;
+        const n = tier === "off" ? 0 : tier === "lite" ? 6 : 10;
         return Array.from({ length: n }, (_, i) => ({
             id: i,
             left: `${4 + ((i * 19 + 7) % 92)}%`,
@@ -38,7 +38,7 @@ const NatureAtmosphere = forwardRef<HTMLDivElement>(function NatureAtmosphere(_,
     }, [tier]);
 
     const sparks = useMemo(() => {
-        const n = tier === "full" ? 14 : tier === "lite" ? 8 : 0;
+        const n = tier === "full" ? 8 : tier === "lite" ? 4 : 0;
         return Array.from({ length: n }, (_, i) => ({
             id: i,
             left: `${8 + ((i * 23) % 84)}%`,

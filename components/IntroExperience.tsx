@@ -400,16 +400,16 @@ export default function IntroExperience({ children }: { children: React.ReactNod
             </AnimatePresence>
 
             {/* Content stays mounted for crawlers; revealed after intro for humans */}
-            <motion.div
-                initial={false}
-                animate={{ opacity: siteReady ? 1 : 0 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-                className="site-shell"
-                style={{ pointerEvents: siteReady ? "auto" : "none" }}
-                aria-hidden={!siteReady}
-            >
-                {children}
-            </motion.div>
+            {siteReady ? (
+                <div className="site-shell">{children}</div>
+            ) : (
+                <div
+                    className="site-shell opacity-0 pointer-events-none"
+                    aria-hidden
+                >
+                    {children}
+                </div>
+            )}
             {!siteReady && !showIntro && (
                 <div className="fixed inset-0 z-[90] bg-[#050b09]" aria-hidden />
             )}
