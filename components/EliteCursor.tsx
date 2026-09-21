@@ -1,17 +1,18 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 const HIT =
     "a, button, [role='button'], input, textarea, label, select, summary, [data-cursor='pointer'], .elite-magnetic, .elite-surface";
 
 /**
- * Styles injected here so Turbopack CSS cache can't hide the cursor.
- * Position uses transform only — no size transitions on the tip (avoids micro-lag).
+ * Custom diamond cursor stays on ALWAYS — never hand off to the OS arrow.
+ * Position = pointermove only (same speed as the mouse).
  */
 const CURSOR_CSS = `
 body.elite-cursor-on, body.elite-cursor-on * { cursor: none !important; }
+
 .elite-cursor {
   position: fixed; inset: 0; z-index: 2147483646; pointer-events: none;
   display: none;
@@ -19,12 +20,15 @@ body.elite-cursor-on, body.elite-cursor-on * { cursor: none !important; }
 @media (min-width: 768px) {
   .elite-cursor { display: block; }
 }
+
 .elite-cursor-tip {
   position: fixed; top: 0; left: 0;
   width: 28px; height: 28px;
   display: grid; place-items: center;
   will-change: transform;
   transform: translate3d(-100px, -100px, 0);
+  transition: none !important;
+  contain: layout style;
 }
 .elite-cursor-frame {
   position: absolute; inset: 7px;
@@ -33,7 +37,7 @@ body.elite-cursor-on, body.elite-cursor-on * { cursor: none !important; }
   transform: rotate(45deg) scale(0.85);
   opacity: 0;
   box-sizing: border-box;
-  transition: opacity 80ms ease, transform 80ms ease, border-color 80ms ease, background-color 80ms ease;
+  transition: opacity 50ms linear, border-color 50ms linear, background-color 50ms linear;
 }
 .elite-cursor-mark {
   position: relative; z-index: 1;
@@ -43,7 +47,7 @@ body.elite-cursor-on, body.elite-cursor-on * { cursor: none !important; }
   border-radius: 1.5px;
   transform: rotate(45deg);
   box-shadow: 0 1px 3px rgba(15,23,42,0.22);
-  transition: background-color 80ms ease, border-color 80ms ease, box-shadow 80ms ease, transform 80ms ease;
+  transition: background-color 50ms linear, border-color 50ms linear, box-shadow 50ms linear;
 }
 .elite-cursor-tip.is-hot .elite-cursor-frame {
   opacity: 1;
@@ -55,23 +59,18 @@ body.elite-cursor-on, body.elite-cursor-on * { cursor: none !important; }
   background: #10b981;
   border-color: #ecfdf5;
   box-shadow: 0 0 10px rgba(16,185,129,0.45);
-  transform: rotate(45deg) scale(1.08);
 }
 .elite-cursor-tip.is-down .elite-cursor-mark {
-  transform: rotate(45deg) scale(0.82);
+  background: #059669;
+  box-shadow: 0 0 6px rgba(16,185,129,0.35);
 }
 `;
 
-/**
- * Professional dual-state cursor — true 1:1 tracking.
- * Hit-testing runs on a separate rAF so it never delays position updates.
- */
+const HALF = 14;
+
 export default function EliteCursor() {
     const [on, setOn] = useState(false);
     const [mounted, setMounted] = useState(false);
-    const tipRef = useRef<HTMLDivElement>(null);
-    const pos = useRef({ x: -100, y: -100 });
-    const hot = useRef(false);
 
     useEffect(() => {
         setMounted(true);
@@ -85,62 +84,62 @@ export default function EliteCursor() {
         if (!on || !mounted) return;
 
         let cancelled = false;
-        let hitRaf = 0;
-        let cleanupMove: (() => void) | undefined;
+        let tip: HTMLDivElement | null = null;
+        let cleanup: (() => void) | undefined;
 
-        const boot = requestAnimationFrame(() => {
-            const tip = tipRef.current;
-            if (!tip || cancelled) return;
+        const attach = () => {
+            if (cancelled) return;
+            const layer = document.querySelector(".elite-cursor");
+            if (!layer) {
+                requestAnimationFrame(attach);
+                return;
+            }
 
-            const place = () => {
-                const { x, y } = pos.current;
-                tip.style.transform = `translate3d(${x}px, ${y}px, 0) translate(-50%, -50%)`;
+            tip = document.createElement("div");
+            tip.className = "elite-cursor-tip";
+            tip.innerHTML =
+                '<span class="elite-cursor-frame"></span><span class="elite-cursor-mark"></span>';
+            layer.appendChild(tip);
+
+            let hot = false;
+            const setHot = (next: boolean) => {
+                if (!tip || next === hot) return;
+                hot = next;
+                tip.classList.toggle("is-hot", next);
             };
 
-            // Position: every mousemove, zero delay
-            const onMove = (e: MouseEvent) => {
-                pos.current.x = e.clientX;
-                pos.current.y = e.clientY;
-                place();
+            const onPointerMove = (e: PointerEvent) => {
+                if (!tip) return;
+                tip.style.transform = `translate3d(${e.clientX - HALF}px, ${e.clientY - HALF}px, 0)`;
             };
 
-            // Hit-test: separate loop, throttled — never blocks place()
-            let lastHit = 0;
-            const hitLoop = (time: number) => {
-                if (time - lastHit >= 32) {
-                    lastHit = time;
-                    const { x, y } = pos.current;
-                    const el = document.elementFromPoint(x, y) as HTMLElement | null;
-                    const next = !!el?.closest(HIT);
-                    if (next !== hot.current) {
-                        hot.current = next;
-                        tip.classList.toggle("is-hot", next);
-                    }
-                }
-                hitRaf = requestAnimationFrame(hitLoop);
+            const onOver = (e: Event) => {
+                const t = e.target as Element | null;
+                setHot(!!t?.closest?.(HIT));
             };
 
-            const onDown = () => tip.classList.add("is-down");
-            const onUp = () => tip.classList.remove("is-down");
+            const onDown = () => tip?.classList.add("is-down");
+            const onUp = () => tip?.classList.remove("is-down");
 
-            place();
-            window.addEventListener("mousemove", onMove, { passive: true });
-            window.addEventListener("mousedown", onDown);
-            window.addEventListener("mouseup", onUp);
-            hitRaf = requestAnimationFrame(hitLoop);
+            window.addEventListener("pointermove", onPointerMove, { passive: true });
+            document.addEventListener("mouseover", onOver, true);
+            window.addEventListener("pointerdown", onDown, { passive: true });
+            window.addEventListener("pointerup", onUp, { passive: true });
 
-            cleanupMove = () => {
-                window.removeEventListener("mousemove", onMove);
-                window.removeEventListener("mousedown", onDown);
-                window.removeEventListener("mouseup", onUp);
-                cancelAnimationFrame(hitRaf);
+            cleanup = () => {
+                window.removeEventListener("pointermove", onPointerMove);
+                document.removeEventListener("mouseover", onOver, true);
+                window.removeEventListener("pointerdown", onDown);
+                window.removeEventListener("pointerup", onUp);
+                tip?.remove();
+                tip = null;
             };
-        });
+        };
 
+        attach();
         return () => {
             cancelled = true;
-            cancelAnimationFrame(boot);
-            cleanupMove?.();
+            cleanup?.();
         };
     }, [on, mounted]);
 
@@ -149,12 +148,7 @@ export default function EliteCursor() {
     return createPortal(
         <>
             <style dangerouslySetInnerHTML={{ __html: CURSOR_CSS }} />
-            <div className="elite-cursor" aria-hidden>
-                <div ref={tipRef} className="elite-cursor-tip">
-                    <span className="elite-cursor-frame" />
-                    <span className="elite-cursor-mark" />
-                </div>
-            </div>
+            <div className="elite-cursor" aria-hidden />
         </>,
         document.body
     );

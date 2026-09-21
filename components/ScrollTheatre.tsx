@@ -1,23 +1,16 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { onScrollProgress } from "@/lib/scrollBus";
 
-/**
- * Minimal scroll chrome — driven by native scroll only (no Framer lag layer).
- */
+/** Minimal scroll chrome — transform + text only, shared scroll bus. */
 export default function ScrollTheatre() {
     const wrapRef = useRef<HTMLDivElement>(null);
     const pctRef = useRef<HTMLSpanElement>(null);
 
     useEffect(() => {
-        let raf = 0;
         let lastPct = -1;
-        let ticking = false;
-
-        const paint = () => {
-            ticking = false;
-            const max = document.documentElement.scrollHeight - window.innerHeight;
-            const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+        return onScrollProgress((p) => {
             const pct = Math.round(p * 100);
             const y = 8 + p * 80;
 
@@ -28,23 +21,7 @@ export default function ScrollTheatre() {
                 lastPct = pct;
                 pctRef.current.textContent = `${pct}%`;
             }
-        };
-
-        const onScroll = () => {
-            if (!ticking) {
-                ticking = true;
-                raf = requestAnimationFrame(paint);
-            }
-        };
-
-        paint();
-        window.addEventListener("scroll", onScroll, { passive: true });
-        window.addEventListener("resize", onScroll, { passive: true });
-        return () => {
-            window.removeEventListener("scroll", onScroll);
-            window.removeEventListener("resize", onScroll);
-            cancelAnimationFrame(raf);
-        };
+        });
     }, []);
 
     return (

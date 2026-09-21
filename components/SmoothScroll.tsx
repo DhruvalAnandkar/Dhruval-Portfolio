@@ -3,11 +3,11 @@
 import { useEffect } from "react";
 import { useSiteReady } from "./IntroExperience";
 import { scrollToId } from "@/lib/lenisBridge";
+import { startScrollBus } from "@/lib/scrollBus";
 
 /**
- * Hash-link routing only — native wheel/trackpad scroll.
- * Lenis wheel smoothing was removed: its lerp made the page catch up
- * seconds after input (felt like lag / glitching).
+ * After intro: install the scroll bus + hash-link routing.
+ * Native wheel scroll (no Lenis lerp). Progress chrome shares one scroll bus.
  */
 export default function SmoothScroll() {
     const ready = useSiteReady();
@@ -16,6 +16,7 @@ export default function SmoothScroll() {
         if (!ready) return;
 
         document.documentElement.classList.remove("lenis-on");
+        startScrollBus();
 
         const onClick = (e: MouseEvent) => {
             const target = e.target as HTMLElement | null;
@@ -30,7 +31,9 @@ export default function SmoothScroll() {
         };
 
         document.addEventListener("click", onClick);
-        return () => document.removeEventListener("click", onClick);
+        return () => {
+            document.removeEventListener("click", onClick);
+        };
     }, [ready]);
 
     return null;

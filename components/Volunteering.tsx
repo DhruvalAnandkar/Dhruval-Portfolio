@@ -38,13 +38,13 @@ export default function Volunteering() {
             <div className="max-w-6xl mx-auto relative z-10">
                 <motion.div
                     ref={ref}
-                    initial={{ opacity: 0.55, y: 40 }}
+                    initial={{ opacity: 0.94, y: 12 }}
                     animate={
                         isInView
                             ? { opacity: 1, y: 0 }
-                            : { opacity: 0.55, y: 28 }
+                            : { opacity: 0.94, y: 8 }
                     }
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                     className="mb-10"
                 >
                     <p className="text-[#10b981] text-sm font-semibold tracking-widest uppercase mb-3">
@@ -64,13 +64,13 @@ export default function Volunteering() {
                         return (
                             <motion.div
                                 key={item.role}
-                                initial={{ opacity: 0.55, y: 36, scale: 0.96 }}
+                                initial={{ opacity: 0.94, y: 10, scale: 0.96 }}
                                 animate={
                                     isInView
                                         ? { opacity: 1, y: 0, scale: 1 }
-                                        : { opacity: 0.6, y: 22, scale: 0.97 }
+                                        : { opacity: 0.95, y: 8, scale: 0.97 }
                                 }
-                                transition={{ duration: 0.55, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+                                transition={{ duration: 0.22, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
                                 whileHover={{ y: -10, scale: 1.02 }}
                                 className="glass calm-card elite-surface rounded-3xl p-7 shadow-md hover:shadow-xl transition-shadow duration-300"
                             >

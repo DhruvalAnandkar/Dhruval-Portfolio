@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 
 /**
- * Professional side gutters — light architecture.
- * No scroll-linked layout (top: calc) — that thrashed while scrolling.
+ * Side gutters — wash-only on compact mid sections (orbs stacked 9× and fought scroll).
+ * Full/map keep soft orbs (radial gradients, no filter:blur).
  */
 export default function SideMarginLife({
     tone = "meadow",
@@ -33,11 +33,11 @@ export default function SideMarginLife({
                 aria-hidden
             >
                 <div className="side-rail-wash side-rail-wash-l" />
-                <div className="side-rail-veil side-rail-veil-l" />
-                <span className="side-rail-orb side-rail-orb-l-1" />
-                <span className="side-rail-orb side-rail-orb-l-2" />
                 {!compact && (
                     <>
+                        <div className="side-rail-veil side-rail-veil-l" />
+                        <span className="side-rail-orb side-rail-orb-l-1" />
+                        <span className="side-rail-orb side-rail-orb-l-2" />
                         <span className="side-rail-line side-rail-line-l-1" />
                         <span className="side-rail-pulse side-rail-pulse-l" />
                         <span className="side-rail-node side-rail-node-l-1" />
@@ -52,11 +52,11 @@ export default function SideMarginLife({
                 aria-hidden
             >
                 <div className="side-rail-wash side-rail-wash-r" />
-                <div className="side-rail-veil side-rail-veil-r" />
-                <span className="side-rail-orb side-rail-orb-r-1" />
-                <span className="side-rail-orb side-rail-orb-r-2" />
                 {!compact && (
                     <>
+                        <div className="side-rail-veil side-rail-veil-r" />
+                        <span className="side-rail-orb side-rail-orb-r-1" />
+                        <span className="side-rail-orb side-rail-orb-r-2" />
                         <span className="side-rail-line side-rail-line-r-1" />
                         <span className="side-rail-pulse side-rail-pulse-r" />
                         <span className="side-rail-node side-rail-node-r-1" />

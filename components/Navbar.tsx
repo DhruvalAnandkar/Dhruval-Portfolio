@@ -21,9 +21,25 @@ export default function Navbar() {
     const [active, setActive] = useState("");
 
     useEffect(() => {
-        const onScroll = () => setScrolled(window.scrollY > 24);
+        let raf = 0;
+        let ticking = false;
+        const update = () => {
+            ticking = false;
+            const next = window.scrollY > 24;
+            setScrolled((prev) => (prev === next ? prev : next));
+        };
+        const onScroll = () => {
+            if (!ticking) {
+                ticking = true;
+                raf = requestAnimationFrame(update);
+            }
+        };
+        update();
         window.addEventListener("scroll", onScroll, { passive: true });
-        return () => window.removeEventListener("scroll", onScroll);
+        return () => {
+            window.removeEventListener("scroll", onScroll);
+            cancelAnimationFrame(raf);
+        };
     }, []);
 
     useEffect(() => {
@@ -53,11 +69,11 @@ export default function Navbar() {
                     transition={{ duration: 0.55, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
                     className={`
             w-full max-w-4xl flex items-center justify-between gap-4
-            px-5 transition-all duration-500 rounded-2xl
+            px-5 transition-[padding,background-color,box-shadow,border-color] duration-300 rounded-2xl
             ${
                 scrolled
-                    ? "py-3 glass shadow-2xl border border-emerald-100/80 scale-[0.98] bg-white/80"
-                    : "py-4 bg-transparent"
+                    ? "py-3 bg-white/97 shadow-xl border border-emerald-100/80"
+                    : "py-4 bg-transparent border border-transparent"
             }
           `}
                 >

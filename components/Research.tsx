@@ -54,13 +54,13 @@ function PaperCard({ paper, delay }: { paper: Paper; delay: number }) {
     return (
         <motion.div
             ref={ref}
-            initial={{ opacity: 0.55, y: 40, scale: 0.97 }}
+            initial={{ opacity: 0.94, y: 12, scale: 0.97 }}
             animate={
                 isInView
                     ? { opacity: 1, y: 0, scale: 1 }
-                    : { opacity: 0.6, y: 28, scale: 0.98 }
+                    : { opacity: 0.95, y: 8, scale: 0.98 }
             }
-            transition={{ duration: 0.55, delay, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.22, delay, ease: [0.22, 1, 0.36, 1] }}
             whileHover={{ y: -10, scale: 1.02 }}
             className="glass calm-card elite-surface rounded-3xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col"
         >
@@ -143,13 +143,13 @@ export default function Research() {
             <div className="max-w-6xl mx-auto relative z-10">
                 <motion.div
                     ref={ref}
-                    initial={{ opacity: 0.55, y: 40 }}
+                    initial={{ opacity: 0.94, y: 12 }}
                     animate={
                         isInView
                             ? { opacity: 1, y: 0 }
-                            : { opacity: 0.55, y: 28 }
+                            : { opacity: 0.94, y: 8 }
                     }
-                    transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                     className="mb-10"
                 >
                     <p className="text-[#10b981] text-sm font-semibold tracking-widest uppercase mb-3">
